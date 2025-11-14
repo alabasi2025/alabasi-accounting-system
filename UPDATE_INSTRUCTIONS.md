@@ -15,7 +15,7 @@
 
 2. **انتقل إلى مجلد المشروع:**
    ```powershell
-   cd C:\xampp\htdocs\alabasi-xampp-system
+   cd D:\AAAAAA\alabasi-xampp-system
    ```
 
 3. **شغّل سكريبت التحديث الكامل:**
@@ -40,7 +40,7 @@
 
 2. **انتقل إلى مجلد المشروع:**
    ```powershell
-   cd C:\xampp\htdocs\alabasi-xampp-system
+   cd D:\AAAAAA\alabasi-xampp-system
    ```
 
 3. **شغّل سكريبت التحديث السريع:**
@@ -61,7 +61,7 @@
 
 ```powershell
 # 1. الانتقال إلى المجلد
-cd C:\xampp\htdocs\alabasi-xampp-system
+cd D:\AAAAAA\alabasi-xampp-system
 
 # 2. التحقق من الحالة
 git status

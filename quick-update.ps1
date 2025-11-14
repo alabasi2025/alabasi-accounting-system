@@ -3,7 +3,7 @@
 # =====================================================
 
 # المسار المحلي (عدّله حسب مسارك)
-$xamppPath = "C:\xampp\htdocs\alabasi-xampp-system"
+$xamppPath = "D:\AAAAAA\alabasi-xampp-system"
 
 Write-Host "🔄 تحديث سريع من GitHub..." -ForegroundColor Cyan
 Write-Host ""

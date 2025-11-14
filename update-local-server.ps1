@@ -14,7 +14,7 @@ Write-Host ""
 # =====================================================
 # 1. تحديد المسار المحلي لـ XAMPP
 # =====================================================
-$xamppPath = "C:\xampp\htdocs\alabasi-xampp-system"
+$xamppPath = "D:\AAAAAA\alabasi-xampp-system"
 
 Write-Host "[1/6] التحقق من المسار المحلي..." -ForegroundColor Green
 if (-Not (Test-Path $xamppPath)) {
