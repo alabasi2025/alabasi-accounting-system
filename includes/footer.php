@@ -7,6 +7,7 @@
     </div>
     <!-- نهاية المحتوى الرئيسي -->
     
+    <script src="js/collapsible-sidebar.js"></script>
     <script>
     // Toggle Sidebar - فتح وإغلاق القائمة الجانبية
     function toggleSidebar() {
