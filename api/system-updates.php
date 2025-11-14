@@ -219,17 +219,119 @@ function applyGitHubUpdate($pdo, $input, $userId) {
     
     $updateId = $pdo->lastInsertId();
     
-    // هنا يمكن إضافة كود لتنزيل وتطبيق التحديث فعلياً
-    // لكن في بيئة الإنتاج، يفضل استخدام Git Pull أو تنزيل ZIP
-    
-    // تحديث الحالة إلى مكتمل
-    $stmt = $pdo->prepare("UPDATE system_updates 
-                           SET status = 'completed', 
-                               filesModified = ?,
-                               filesAdded = ?,
-                               filesDeleted = ?
-                           WHERE id = ?");
-    $stmt->execute([0, 0, 0, $updateId]);
+    // تنزيل وتطبيق التحديث من GitHub
+    try {
+        // استخراج معلومات المستودع
+        preg_match('/github\.com\/([^\/]+)\/([^\/]+?)(\.git)?$/', $repoUrl, $matches);
+        if (!$matches) {
+            throw new Exception('رابط GitHub غير صحيح');
+        }
+        
+        $owner = $matches[1];
+        $repo = rtrim($matches[2], '.git');
+        
+        // تنزيل الملفات المتغيرة في هذا الـ commit
+        $apiUrl = "https://api.github.com/repos/{$owner}/{$repo}/commits/{$commitSha}";
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Alabasi-Accounting-System');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        $commitData = json_decode($response, true);
+        
+        if (!isset($commitData['files'])) {
+            throw new Exception('فشل الحصول على معلومات التحديث من GitHub');
+        }
+        
+        $filesModified = 0;
+        $filesAdded = 0;
+        $filesDeleted = 0;
+        
+        // معالجة كل ملف
+        foreach ($commitData['files'] as $file) {
+            $filePath = $file['filename'];
+            $status = $file['status']; // added, modified, removed
+            $targetPath = '../' . $filePath;
+            
+            // حفظ المحتوى القديم للتراجع
+            $oldContent = null;
+            if (file_exists($targetPath)) {
+                $oldContent = file_get_contents($targetPath);
+            }
+            
+            if ($status === 'removed') {
+                // حذف الملف
+                if (file_exists($targetPath)) {
+                    unlink($targetPath);
+                    $filesDeleted++;
+                }
+                $fileAction = 'deleted';
+                $newContent = null;
+            } else {
+                // تنزيل المحتوى الجديد
+                $rawUrl = $file['raw_url'];
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $rawUrl);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                $newContent = curl_exec($ch);
+                curl_close($ch);
+                
+                // إنشاء المجلدات إذا لزم الأمر
+                $dir = dirname($targetPath);
+                if (!file_exists($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+                
+                // حفظ الملف
+                file_put_contents($targetPath, $newContent);
+                
+                if ($status === 'added') {
+                    $filesAdded++;
+                    $fileAction = 'added';
+                } else {
+                    $filesModified++;
+                    $fileAction = 'modified';
+                }
+            }
+            
+            // تسجيل الملف في update_files_log
+            $stmt = $pdo->prepare("INSERT INTO update_files_log 
+                                   (updateId, filePath, fileAction, oldContent, newContent)
+                                   VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $updateId,
+                $filePath,
+                $fileAction,
+                $oldContent,
+                $newContent
+            ]);
+        }
+        
+        // تحديث الحالة إلى مكتمل
+        $stmt = $pdo->prepare("UPDATE system_updates 
+                               SET status = 'completed', 
+                                   filesModified = ?,
+                                   filesAdded = ?,
+                                   filesDeleted = ?,
+                                   canRollback = TRUE
+                               WHERE id = ?");
+        $stmt->execute([$filesModified, $filesAdded, $filesDeleted, $updateId]);
+        
+    } catch (Exception $e) {
+        // في حالة الفشل، تحديث الحالة
+        $stmt = $pdo->prepare("UPDATE system_updates 
+                               SET status = 'failed', 
+                                   errorMessage = ?
+                               WHERE id = ?");
+        $stmt->execute([$e->getMessage(), $updateId]);
+        
+        throw $e;
+    }
     
     echo json_encode([
         'success' => true,
