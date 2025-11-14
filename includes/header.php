@@ -161,6 +161,11 @@
                 <span class="icon">⚙️</span>
                 <span class="text">الإعدادات</span>
             </a>
+            
+            <a href="system-structure.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'system-structure.php' ? 'active' : ''; ?>">
+                <span class="icon">🏗️</span>
+                <span class="text">مخطط البناء</span>
+            </a>
         </nav>
         
         <div class="sidebar-footer">

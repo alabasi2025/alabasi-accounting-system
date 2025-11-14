@@ -11,6 +11,57 @@ if (!isset($_SESSION['user_id'])) {
 
 $pageTitle = 'إدارة الوحدات';
 
+// معالجة إضافة وحدة جديدة
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
+    try {
+        $code = trim($_POST['code'] ?? '');
+        $nameAr = trim($_POST['nameAr'] ?? '');
+        $nameEn = trim($_POST['nameEn'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $isActive = isset($_POST['isActive']) ? 1 : 0;
+        
+        // التحقق من البيانات المطلوبة
+        if (empty($code) || empty($nameAr)) {
+            setMessage('يرجى إدخال رمز الوحدة والاسم بالعربي', 'danger');
+            header('Location: units.php');
+            exit;
+        }
+        
+        // التحقق من عدم تكرار الرمز
+        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM units WHERE code = ?");
+        $checkStmt->execute([$code]);
+        if ($checkStmt->fetchColumn() > 0) {
+            setMessage('رمز الوحدة موجود مسبقاً', 'danger');
+            header('Location: units.php');
+            exit;
+        }
+        
+        // إضافة الوحدة
+        $stmt = $pdo->prepare("
+            INSERT INTO units (code, nameAr, nameEn, description, isActive, createdBy, createdAt)
+            VALUES (?, ?, ?, ?, ?, ?, NOW())
+        ");
+        
+        $stmt->execute([
+            $code,
+            $nameAr,
+            $nameEn,
+            $description,
+            $isActive,
+            $_SESSION['user_id']
+        ]);
+        
+        setMessage('تم إضافة الوحدة بنجاح', 'success');
+        header('Location: units.php');
+        exit;
+        
+    } catch (PDOException $e) {
+        setMessage('حدث خطأ أثناء إضافة الوحدة: ' . $e->getMessage(), 'danger');
+        header('Location: units.php');
+        exit;
+    }
+}
+
 // Get units with company count
 $stmt = $pdo->query("
     SELECT u.*, 

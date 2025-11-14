@@ -10,14 +10,14 @@ try {
     switch ($action) {
         case 'add':
             // Check if code already exists
-            $stmt = $pdo->prepare("SELECT id FROM units WHERE code = ?");
+            $stmt = $pdo->prepare("SELECT id FROM accounting_units WHERE code = ?");
             $stmt->execute([$_POST['code']]);
             if ($stmt->fetch()) {
                 echo json_encode(['success' => false, 'message' => 'رمز الوحدة موجود مسبقاً']);
                 exit;
             }
             
-            $stmt = $pdo->prepare("INSERT INTO units (code, nameAr, nameEn, description, isActive, createdBy) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO accounting_units (code, nameAr, nameEn, description, isActive, createdBy) VALUES (?, ?, ?, ?, ?, ?)");
             
             $stmt->execute([
                 $_POST['code'],
@@ -33,14 +33,14 @@ try {
             
         case 'edit':
             // Check if code already exists (excluding current unit)
-            $stmt = $pdo->prepare("SELECT id FROM units WHERE code = ? AND id != ?");
+            $stmt = $pdo->prepare("SELECT id FROM accounting_units WHERE code = ? AND id != ?");
             $stmt->execute([$_POST['code'], $_POST['id']]);
             if ($stmt->fetch()) {
                 echo json_encode(['success' => false, 'message' => 'رمز الوحدة موجود مسبقاً']);
                 exit;
             }
             
-            $stmt = $pdo->prepare("UPDATE units SET code=?, nameAr=?, nameEn=?, description=?, isActive=? WHERE id=?");
+            $stmt = $pdo->prepare("UPDATE accounting_units SET code=?, nameAr=?, nameEn=?, description=?, isActive=? WHERE id=?");
             
             $stmt->execute([
                 $_POST['code'],
@@ -63,14 +63,14 @@ try {
                 exit;
             }
             
-            $stmt = $pdo->prepare("DELETE FROM units WHERE id = ?");
+            $stmt = $pdo->prepare("DELETE FROM accounting_units WHERE id = ?");
             $stmt->execute([$_POST['id']]);
             
             echo json_encode(['success' => true, 'message' => 'تم حذف الوحدة بنجاح']);
             break;
             
         case 'get':
-            $stmt = $pdo->prepare("SELECT * FROM units WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT * FROM accounting_units WHERE id = ?");
             $stmt->execute([$_GET['id']]);
             $unit = $stmt->fetch();
             
