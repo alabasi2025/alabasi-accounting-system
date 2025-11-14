@@ -71,9 +71,17 @@ try {
     }
 } catch (Exception $e) {
     http_response_code(500);
+    
+    // تسجيل الخطأ للتحليل
+    error_log("System Updates API Error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => $e->getMessage(),
+        'error_details' => $e->getTraceAsString(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
     ]);
 }
 
