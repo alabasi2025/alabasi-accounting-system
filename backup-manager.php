@@ -695,12 +695,23 @@ if (!empty($backupLogs)) {
                                 <i class="fas fa-code-branch"></i> ${commit.sha.substring(0, 7)}
                             </small>
                         </div>
-                        <button class="btn btn-sm btn-primary" onclick="applyGitHubUpdate('${commit.sha}', '${escapeHtml(commit.message)}')">
+                        <button class="btn btn-sm btn-primary apply-update-btn" 
+                                data-sha="${commit.sha}" 
+                                data-message="${escapeHtml(commit.message)}">
                             <i class="fas fa-download"></i> تطبيق
                         </button>
                     </div>
                 `;
                 list.appendChild(card);
+            });
+            
+            // إضافة event listeners للأزرار
+            document.querySelectorAll('.apply-update-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const sha = this.getAttribute('data-sha');
+                    const message = this.getAttribute('data-message');
+                    applyGitHubUpdate(sha, message);
+                });
             });
             
             container.style.display = 'block';
