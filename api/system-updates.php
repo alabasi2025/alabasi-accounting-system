@@ -261,10 +261,11 @@ function applyGitHubUpdate($pdo, $input, $userId) {
         $filesDeleted = 0;
         
         // معالجة كل ملف
+        $projectRoot = dirname(__DIR__); // المجلد الرئيسي للمشروع
         foreach ($commitData['files'] as $file) {
             $filePath = $file['filename'];
             $status = $file['status']; // added, modified, removed
-            $targetPath = '../' . $filePath;
+            $targetPath = $projectRoot . '/' . $filePath;
             
             // حفظ المحتوى القديم للتراجع
             $oldContent = null;
