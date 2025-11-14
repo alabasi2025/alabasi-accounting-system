@@ -1,7 +1,8 @@
 <?php
 /**
- * صفحة تسجيل الدخول - دخول مباشر بدون بيانات
- * Login Page - Direct Login Without Credentials
+ * صفحة تسجيل الدخول - دخول مباشر بدون كلمة سر
+ * Login Page - Direct Login Without Password
+ * Version: 2.0 - Fixed for root user
  */
 
 session_start();
@@ -17,16 +18,16 @@ if (isLoggedIn()) {
 
 // تسجيل دخول تلقائي
 try {
-    // جلب أول مستخدم من قاعدة البيانات
-    $stmt = $pdo->query("SELECT * FROM users WHERE isActive = 1 LIMIT 1");
+    // جلب مستخدم root أو أول مستخدم نشط
+    $stmt = $pdo->query("SELECT * FROM users WHERE (username = 'root' OR username = 'admin') AND isActive = 1 ORDER BY username DESC LIMIT 1");
     $user = $stmt->fetch();
     
     if ($user) {
         // تسجيل الدخول تلقائياً
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-        $_SESSION['user_name'] = $user['nameAr'];
-        $_SESSION['user_role'] = $user['role'];
+        $_SESSION['user_name'] = $user['nameAr'] ?? $user['username'];
+        $_SESSION['user_role'] = $user['role'] ?? 'admin';
         
         // تحديث آخر تسجيل دخول
         $updateStmt = $pdo->prepare("UPDATE users SET lastLogin = NOW() WHERE id = ?");
@@ -35,9 +36,11 @@ try {
         // الذهاب إلى لوحة التحكم
         header("Location: dashboard.php");
         exit;
+    } else {
+        $error = "لا يوجد مستخدمين نشطين في النظام";
     }
 } catch (PDOException $e) {
-    $error = "خطأ في الاتصال بقاعدة البيانات";
+    $error = "خطأ في الاتصال بقاعدة البيانات: " . $e->getMessage();
 }
 ?>
 <!DOCTYPE html>
@@ -45,7 +48,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - نظام العباسي الموحد</title>
+    <title>تسجيل الدخول - نظام الأباسي الموحد</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         .auto-login-message {
@@ -65,25 +68,34 @@ try {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .error-box {
+            background: #fee;
+            border: 2px solid #c33;
+            color: #c33;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <h1>نظام العباسي الموحد</h1>
+                <h1>🏛️ نظام الأباسي الموحد</h1>
                 <p>نظام محاسبي متكامل</p>
             </div>
             
+            <?php if (!isset($error)): ?>
             <div class="auto-login-message">
                 <div class="spinner"></div>
                 <h3>جاري تسجيل الدخول تلقائياً...</h3>
                 <p style="color: #666; margin-top: 10px;">يرجى الانتظار...</p>
             </div>
-            
-            <?php if (isset($error)): ?>
-            <div class="alert alert-danger">
-                <?php echo $error; ?>
+            <?php else: ?>
+            <div class="error-box">
+                <h3>⚠️ خطأ</h3>
+                <p><?php echo htmlspecialchars($error); ?></p>
             </div>
             <?php endif; ?>
         </div>
@@ -92,7 +104,9 @@ try {
     <script>
         // إعادة تحميل الصفحة بعد ثانية واحدة إذا لم يتم التوجيه
         setTimeout(function() {
-            window.location.href = 'dashboard.php';
+            if (!<?php echo isset($error) ? 'true' : 'false'; ?>) {
+                window.location.href = 'dashboard.php';
+            }
         }, 1000);
     </script>
 </body>
