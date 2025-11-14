@@ -7,10 +7,13 @@
 -- ============================================
 
 -- حذف الجداول القديمة إذا كانت موجودة (لإعادة البناء)
+-- يجب حذف الجداول بالترتيب العكسي للعلاقات
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS update_notifications;
 DROP TABLE IF EXISTS update_files_log;
 DROP TABLE IF EXISTS system_updates;
 DROP TABLE IF EXISTS auto_update_settings;
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- ============================================
 -- 1. جدول إعدادات التحديث التلقائي
@@ -39,9 +42,7 @@ CREATE TABLE auto_update_settings (
     updateAvailable BOOLEAN DEFAULT FALSE COMMENT 'هل يوجد تحديث متاح',
     
     updatedBy INT NULL,
-    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (updatedBy) REFERENCES users(id) ON DELETE SET NULL
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 COMMENT='إعدادات التحديث التلقائي';
 
@@ -102,9 +103,6 @@ CREATE TABLE system_updates (
     rolledBackBy INT NULL COMMENT 'المستخدم الذي تراجع عن التحديث',
     rolledBackAt TIMESTAMP NULL COMMENT 'وقت التراجع',
     
-    FOREIGN KEY (appliedBy) REFERENCES users(id),
-    FOREIGN KEY (rolledBackBy) REFERENCES users(id) ON DELETE SET NULL,
-    
     INDEX idx_status (status),
     INDEX idx_update_type (updateType),
     INDEX idx_applied_at (appliedAt)
@@ -153,9 +151,6 @@ CREATE TABLE update_notifications (
     readAt TIMESTAMP NULL COMMENT 'وقت القراءة',
     
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (updateId) REFERENCES system_updates(id) ON DELETE SET NULL,
     
     INDEX idx_user_id (userId),
     INDEX idx_is_read (isRead),
