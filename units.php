@@ -15,7 +15,7 @@ $pageTitle = 'إدارة الوحدات';
 $stmt = $pdo->query("
     SELECT u.*, 
            COUNT(DISTINCT c.id) as companyCount,
-           u2.username as createdByName
+           u2.name as createdByName
     FROM units u
     LEFT JOIN companies c ON u.id = c.unitId
     LEFT JOIN users u2 ON u.createdBy = u2.id

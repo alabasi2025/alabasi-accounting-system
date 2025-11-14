@@ -10,9 +10,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $pageTitle = 'إدارة المستخدمين';
-$stmt = $pdo->query("SELECT b.*, c.nameAr as companyName FROM users b JOIN companies c ON b.companyId = c.id ORDER BY b.id DESC");
+$stmt = $pdo->query("SELECT * FROM users ORDER BY id DESC");
 $users = $stmt->fetchAll();
-$companies = $pdo->query("SELECT id, code, nameAr FROM companies WHERE isActive = 1")->fetchAll();
 
 require_once 'includes/header.php';
 ?>

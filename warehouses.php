@@ -10,9 +10,17 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $pageTitle = 'إدارة المخازن';
-$stmt = $pdo->query("SELECT b.*, c.nameAr as companyName FROM warehouses b JOIN companies c ON b.companyId = c.id ORDER BY b.id DESC");
+$stmt = $pdo->query("
+    SELECT w.*, 
+           b.nameAr as branchName,
+           u.name as managerName
+    FROM warehouses w
+    LEFT JOIN branches b ON w.branchId = b.id
+    LEFT JOIN users u ON w.managerId = u.id
+    ORDER BY w.id DESC
+");
 $warehouses = $stmt->fetchAll();
-$companies = $pdo->query("SELECT id, code, nameAr FROM companies WHERE isActive = 1")->fetchAll();
+$branches = $pdo->query("SELECT id, code, nameAr FROM branches WHERE isActive = 1")->fetchAll();
 
 require_once 'includes/header.php';
 ?>

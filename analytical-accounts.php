@@ -13,15 +13,18 @@ $pageTitle = 'الحسابات التحليلية';
 
 // Get analytical accounts with main account names
 $stmt = $pdo->query("
-    SELECT aa.*, a.code as accountCode, a.nameAr as accountName 
-    FROM analyticalAccounts aa 
-    JOIN accounts a ON aa.accountId = a.id 
+    SELECT aa.*, 
+           aat.nameAr as typeName,
+           parent.nameAr as parentName
+    FROM analytical_accounts aa 
+    LEFT JOIN analytical_account_types aat ON aa.typeId = aat.id
+    LEFT JOIN analytical_accounts parent ON aa.parentId = parent.id
     ORDER BY aa.code
 ");
 $analyticalAccounts = $stmt->fetchAll();
 
-// Get accounts for dropdown
-$accounts = $pdo->query("SELECT id, code, nameAr FROM accounts WHERE allowPosting = 1 ORDER BY code")->fetchAll();
+// Get types for dropdown
+$types = $pdo->query("SELECT id, nameAr FROM analytical_account_types ORDER BY id")->fetchAll();
 
 require_once 'includes/header.php';
 ?>

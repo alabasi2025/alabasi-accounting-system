@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $pageTitle = 'الإعدادات';
-$settings = $pdo->query("SELECT * FROM settings ORDER BY category, keyName")->fetchAll();
+$settings = $pdo->query("SELECT * FROM settings ORDER BY category, settingKey")->fetchAll();
 
 require_once 'includes/header.php';
 ?>

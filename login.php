@@ -18,19 +18,19 @@ if (isLoggedIn()) {
 
 // تسجيل دخول تلقائي
 try {
-    // جلب مستخدم root أو أول مستخدم نشط
-    $stmt = $pdo->query("SELECT * FROM users WHERE (username = 'root' OR username = 'admin') AND isActive = 1 ORDER BY username DESC LIMIT 1");
+    // جلب أول مستخدم admin
+    $stmt = $pdo->query("SELECT * FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
     $user = $stmt->fetch();
     
     if ($user) {
         // تسجيل الدخول تلقائياً
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['user_name'] = $user['nameAr'] ?? $user['username'];
-        $_SESSION['user_role'] = $user['role'] ?? 'admin';
+        $_SESSION['username'] = $user['email'] ?? 'admin';
+        $_SESSION['user_name'] = $user['name'] ?? 'admin';
+        $_SESSION['user_role'] = $user['role'];
         
         // تحديث آخر تسجيل دخول
-        $updateStmt = $pdo->prepare("UPDATE users SET lastLogin = NOW() WHERE id = ?");
+        $updateStmt = $pdo->prepare("UPDATE users SET lastSignedIn = NOW() WHERE id = ?");
         $updateStmt->execute([$user['id']]);
         
         // الذهاب إلى لوحة التحكم

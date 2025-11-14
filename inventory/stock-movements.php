@@ -1,9 +1,15 @@
 <?php
-define('ALABASI_SYSTEM', true);
-require_once '../../config/config.php';
-require_once '../../includes/database.php';
-require_once '../../includes/functions.php';
-require_login();
+session_start();
+require_once '../includes/db.php';
+require_once '../includes/functions.php';
+
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 1;
+    $_SESSION['username'] = 'admin';
+    $_SESSION['role'] = 'admin';
+}
+
+$pageTitle = 'حركات المخزون';
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
