@@ -7,8 +7,8 @@
 // إعدادات قاعدة البيانات
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'alabasi_unified');
-define('DB_USER', 'alabasi_user');
-define('DB_PASS', 'alabasi2025');
+define('DB_USER', 'root');
+define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
 // الاتصال بقاعدة البيانات
