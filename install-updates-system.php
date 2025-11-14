@@ -204,9 +204,23 @@ require_once 'includes/db.php';
                         flush();
                         
                     } catch (PDOException $e) {
-                        // تجاهل أخطاء DROP TABLE إذا كان الجدول غير موجود
-                        if (strpos($e->getMessage(), 'Unknown table') === false) {
-                            $steps[] = ['type' => 'error', 'message' => '❌ خطأ: ' . $e->getMessage()];
+                        // تجاهل أخطاء معينة
+                        $ignorable = [
+                            'Unknown table',
+                            "doesn't exist",
+                            'Unknown column'
+                        ];
+                        
+                        $shouldIgnore = false;
+                        foreach ($ignorable as $pattern) {
+                            if (strpos($e->getMessage(), $pattern) !== false) {
+                                $shouldIgnore = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!$shouldIgnore) {
+                            $steps[] = ['type' => 'warning', 'message' => '⚠️ تحذير: ' . $e->getMessage()];
                         }
                     }
                 }
@@ -223,10 +237,15 @@ require_once 'includes/db.php';
                 echo '</div>';
                 
                 // التحقق من النجاح
-                $stmt = $pdo->query("SELECT COUNT(*) as count FROM auto_update_settings");
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                try {
+                    $stmt = $pdo->query("SELECT COUNT(*) as count FROM auto_update_settings");
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $success = ($result && $result['count'] > 0);
+                } catch (PDOException $e) {
+                    $success = false;
+                }
                 
-                if ($result['count'] > 0) {
+                if ($success) {
                     echo '<div class="step">';
                     echo '<h3 class="success">🎉 تم التثبيت بنجاح!</h3>';
                     echo '<p>تم إنشاء جميع الجداول والبيانات بنجاح.</p>';
