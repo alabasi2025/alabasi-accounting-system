@@ -34,6 +34,18 @@ require_once 'includes/db.php';
         $sqlFile = __DIR__ . '/install_updates_simple.sql';
         $sql = file_get_contents($sqlFile);
         
+        // تنظيف التعليقات
+        $lines = explode("\n", $sql);
+        $cleanedLines = [];
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line) || substr($line, 0, 2) === '--') {
+                continue;
+            }
+            $cleanedLines[] = $line;
+        }
+        $sql = implode(" ", $cleanedLines);
+        
         // تقسيم الاستعلامات
         $statements = explode(';', $sql);
         
