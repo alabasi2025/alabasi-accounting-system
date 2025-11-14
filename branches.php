@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $pageTitle = 'إدارة الفروع';
-$stmt = $pdo->query("SELECT b.*, c.nameAr as companyName FROM branches b JOIN companies c ON b.companyId = c.id ORDER BY b.id DESC");
+$stmt = $pdo->query("SELECT b.*, c.nameAr as companyName FROM branches b JOIN companies c ON b.organizationId = c.id ORDER BY b.id DESC");
 $branches = $stmt->fetchAll();
 $companies = $pdo->query("SELECT id, code, nameAr FROM companies WHERE isActive = 1")->fetchAll();
 

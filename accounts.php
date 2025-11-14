@@ -10,16 +10,33 @@ require_once 'includes/functions.php';
 // التحقق من تسجيل الدخول
 requireLogin();
 
+// جلب جميع المؤسسات للفلتر
+$companies = $pdo->query("SELECT id, code, nameAr FROM companies WHERE isActive = 1 ORDER BY nameAr")->fetchAll();
+
+// فلتر المؤسسة (الافتراضي: أول مؤسسة)
+$selectedCompanyId = $_GET['companyId'] ?? ($companies[0]['id'] ?? null);
+
 // جلب جميع الحسابات
 try {
-    $accounts = $pdo->query("
+    $query = "
         SELECT a.*, 
                p.nameAr as parentName,
+               c.nameAr as companyName,
                (SELECT COUNT(*) FROM accounts WHERE parentId = a.id) as childrenCount
         FROM accounts a
         LEFT JOIN accounts p ON a.parentId = p.id
+        LEFT JOIN companies c ON a.companyId = c.id
+        " . ($selectedCompanyId ? "WHERE a.companyId = :companyId" : "") . "
         ORDER BY a.code ASC
-    ")->fetchAll();
+    ";
+    
+    $stmt = $pdo->prepare($query);
+    if ($selectedCompanyId) {
+        $stmt->execute(['companyId' => $selectedCompanyId]);
+    } else {
+        $stmt->execute();
+    }
+    $accounts = $stmt->fetchAll();
     
     // إحصائيات
     $totalAccounts = count($accounts);

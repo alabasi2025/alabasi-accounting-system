@@ -47,9 +47,21 @@
             
             <div class="menu-divider"></div>
             
-            <a href="#" class="menu-item" onclick="alert('قريباً'); return false;">
+            <div class="menu-section">المخزون</div>
+            
+            <a href="inventory/items.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'items.php' ? 'active' : ''; ?>">
                 <span class="icon">📦</span>
-                <span class="text">المخزون</span>
+                <span class="text">إدارة الأصناف</span>
+            </a>
+            
+            <a href="inventory/stock-movements.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'stock-movements.php' ? 'active' : ''; ?>">
+                <span class="icon">📋</span>
+                <span class="text">حركات المخزون</span>
+            </a>
+            
+            <a href="inventory/inventory-balance.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'inventory-balance.php' ? 'active' : ''; ?>">
+                <span class="icon">📊</span>
+                <span class="text">رصيد المخزون</span>
             </a>
             
             <a href="#" class="menu-item" onclick="alert('قريباً'); return false;">
