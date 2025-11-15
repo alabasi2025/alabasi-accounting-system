@@ -17,9 +17,9 @@ if (!defined('ALABASI_SYSTEM')) {
 // Database Settings
 // ============================================
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'alabasi_unified_complete');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_NAME', 'alabasi_unified');
+define('DB_USER', 'php_admin');
+define('DB_PASS', 'SecurePass2024!');
 define('DB_CHARSET', 'utf8mb4');
 
 // ============================================

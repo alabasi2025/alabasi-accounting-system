@@ -1,7 +1,36 @@
-vendor/
-node_modules/
+# ملفات الإعدادات الحساسة
 .env
-*.log
+includes/db.php
+
+# مجلدات الرفع والنسخ الاحتياطي
+uploads/*
+!uploads/.gitkeep
+backups/*
+!backups/.gitkeep
+
+# ملفات النظام
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# ملفات IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# ملفات مؤقتة
+*.log
+*.tmp
+*.cache
+*.swp
+*~
+
+# ملفات Composer
+/vendor/
+composer.lock
+
+# ملفات Node
+node_modules/
+package-lock.json
+yarn.lock
 
