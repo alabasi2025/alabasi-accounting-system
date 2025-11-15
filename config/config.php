@@ -16,10 +16,10 @@ if (!defined('ALABASI_SYSTEM')) {
 // إعدادات قاعدة البيانات
 // Database Settings
 // ============================================
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'alabasi_unified');
-define('DB_USER', 'php_admin');
-define('DB_PASS', 'SecurePass2024!');
+define('DB_HOST', getenv('MYSQLHOST') ?: 'mysql.railway.internal');
+define('DB_NAME', getenv('MYSQLDATABASE') ?: 'railway');
+define('DB_USER', getenv('MYSQLUSER') ?: 'root');
+define('DB_PASS', getenv('MYSQLPASSWORD') ?: 'XcIUrAfUvNXDjAnaqsmtqVwbhnqCLpau');
 define('DB_CHARSET', 'utf8mb4');
 
 // ============================================
