@@ -24,7 +24,7 @@
                                     <th>المدير</th>
                                     <th>الهاتف</th>
                                     <th>البريد الإلكتروني</th>
-                                    <th>عدد الوحدات</th>
+                                    <th>الوحدة</th>
                                     <th>عدد الفروع</th>
                                     <th>الحالة</th>
                                     <th>الإجراءات</th>
@@ -43,7 +43,11 @@
                                     <td>{{ $company->phone ?? '-' }}</td>
                                     <td>{{ $company->email ?? '-' }}</td>
                                     <td>
-                                        <span class="badge bg-info">{{ $company->units_count }}</span>
+                                        @if($company->unit)
+                                            <span class="badge bg-info">{{ $company->unit->unit_name }}</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <span class="badge bg-secondary">{{ $company->branches_count }}</span>

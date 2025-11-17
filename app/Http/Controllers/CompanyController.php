@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,7 +14,8 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::withCount(['units', 'branches'])
+        $companies = Company::with('unit')
+                           ->withCount('branches')
                            ->orderBy('company_name')
                            ->paginate(20);
         
@@ -25,7 +27,11 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        return view('companies.create');
+        $units = Unit::where('is_active', true)
+                    ->orderBy('unit_name')
+                    ->get();
+        
+        return view('companies.create', compact('units'));
     }
 
     /**
@@ -34,6 +40,7 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'unit_id' => 'required|exists:units,id',
             'company_code' => 'required|string|max:50|unique:companies',
             'company_name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -52,9 +59,11 @@ class CompanyController extends Controller
             $validated['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
+        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
+
         $company = Company::create($validated);
 
-        return redirect()->route('companies.show', $company)
+        return redirect()->route('companies.index')
                        ->with('success', 'تم إنشاء المؤسسة بنجاح');
     }
 
@@ -63,7 +72,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        $company->load(['units.branches']);
+        $company->load(['unit', 'branches']);
         
         return view('companies.show', compact('company'));
     }
@@ -73,7 +82,11 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
-        return view('companies.edit', compact('company'));
+        $units = Unit::where('is_active', true)
+                    ->orderBy('unit_name')
+                    ->get();
+        
+        return view('companies.edit', compact('company', 'units'));
     }
 
     /**
@@ -82,6 +95,7 @@ class CompanyController extends Controller
     public function update(Request $request, Company $company)
     {
         $validated = $request->validate([
+            'unit_id' => 'required|exists:units,id',
             'company_code' => 'required|string|max:50|unique:companies,company_code,' . $company->id,
             'company_name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -104,9 +118,11 @@ class CompanyController extends Controller
             $validated['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
+        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
+
         $company->update($validated);
 
-        return redirect()->route('companies.show', $company)
+        return redirect()->route('companies.index')
                        ->with('success', 'تم تحديث المؤسسة بنجاح');
     }
 
@@ -115,9 +131,9 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        // Check if company has units
-        if ($company->units()->count() > 0) {
-            return back()->with('error', 'لا يمكن حذف المؤسسة لأنها تحتوي على وحدات');
+        // Check if company has branches
+        if ($company->branches()->count() > 0) {
+            return back()->with('error', 'لا يمكن حذف المؤسسة لأنها تحتوي على فروع');
         }
 
         // Delete logo if exists
