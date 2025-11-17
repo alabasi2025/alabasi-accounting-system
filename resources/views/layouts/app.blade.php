@@ -29,7 +29,7 @@
                     <a href="{{ route('analytical-account-types.index') }}"><i class="bi bi-layers"></i> أنواع الحسابات التحليلية</a>
                     <a href="{{ route('journal-entries.index') }}"><i class="bi bi-journal-text"></i> القيود اليومية</a>
                     <a href="#"><i class="bi bi-receipt"></i> السندات</a>
-                    <a href="#"><i class="bi bi-people"></i> الحسابات التحليلية</a>
+                    <a href="{{ route('analytical-accounts.index') }}"><i class="bi bi-people"></i> الحسابات التحليلية</a>
                     <a href="#"><i class="bi bi-file-earmark-text"></i> التقارير</a>
                     <a href="#"><i class="bi bi-gear"></i> الإعدادات</a>
                     <a href="{{ route('guide.index') }}"><i class="bi bi-book"></i> الدليل</a>

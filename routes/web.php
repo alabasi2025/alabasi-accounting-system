@@ -10,6 +10,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AnalyticalAccountTypeController;
+use App\Http\Controllers\AnalyticalAccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,10 @@ Route::resource('account-types', AccountTypeController::class);
 
 // أنواع الحسابات التحليلية
 Route::resource('analytical-account-types', AnalyticalAccountTypeController::class);
+
+// الحسابات التحليلية الفعلية
+Route::resource('analytical-accounts', AnalyticalAccountController::class);
+Route::get('analytical-accounts/get-accounts-by-type', [AnalyticalAccountController::class, 'getAccountsByType'])->name('analytical-accounts.get-accounts-by-type');
 
 // القيود اليومية
 Route::resource('journal-entries', JournalEntryController::class);
