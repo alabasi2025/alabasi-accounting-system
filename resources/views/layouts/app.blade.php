@@ -163,7 +163,7 @@
                 </a>
                 <div class="collapse" id="systemManagement">
                     <a href="{{ route('units.index') }}" class="sub-item"><i class="bi bi-building"></i> الوحدات</a>
-                    <a href="#" class="sub-item"><i class="bi bi-buildings"></i> المؤسسات</a>
+                    <a href="{{ route('companies.index') }}" class="sub-item"><i class="bi bi-buildings"></i> المؤسسات</a>
                     <a href="#" class="sub-item"><i class="bi bi-diagram-3"></i> الفروع</a>
                 </div>
             </div>
