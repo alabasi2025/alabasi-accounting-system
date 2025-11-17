@@ -31,7 +31,7 @@ class AccountController extends Controller
         // Build query for root accounts (no parent)
         $query = Account::where('company_id', $company->id)
             ->with(['accountType', 'analyticalAccountType', 'children' => function($q) {
-                $q->orderBy('account_code');
+                $q->orderBy('code');
             }])
             ->whereNull('parent_id');
 
@@ -46,7 +46,7 @@ class AccountController extends Controller
 
         if ($search) {
             $query->where(function($q) use ($search) {
-                $q->where('account_code', 'like', "%{$search}%")
+                $q->where('code', 'like', "%{$search}%")
                   ->orWhere('name', 'like', "%{$search}%");
             });
         }
@@ -55,7 +55,7 @@ class AccountController extends Controller
             $query->where('is_active', $isActive);
         }
 
-        $accounts = $query->orderBy('account_code')->get();
+        $accounts = $query->orderBy('code')->get();
 
         // Get filter options
         $accountTypes = AccountType::where('company_id', $company->id)
@@ -90,7 +90,7 @@ class AccountController extends Controller
         // Get all accounts for parent selection (only main accounts can be parents)
         $parentAccounts = Account::where('company_id', $company->id)
             ->where('is_main', true)
-            ->orderBy('account_code')
+            ->orderBy('code')
             ->get();
 
         // Get account types
@@ -133,7 +133,7 @@ class AccountController extends Controller
 
         // Check if account code already exists for this company
         $exists = Account::where('company_id', $company->id)
-            ->where('account_code', $validated['account_code'])
+            ->where('code', $validated['account_code'])
             ->exists();
 
         if ($exists) {
@@ -181,7 +181,7 @@ class AccountController extends Controller
         $parentAccounts = Account::where('company_id', $company->id)
             ->where('is_main', true)
             ->where('id', '!=', $account->id)
-            ->orderBy('account_code')
+            ->orderBy('code')
             ->get();
 
         // Get account types
@@ -217,7 +217,7 @@ class AccountController extends Controller
 
         // Check if account code already exists for this company (excluding current)
         $exists = Account::where('company_id', $account->company_id)
-            ->where('account_code', $validated['account_code'])
+            ->where('code', $validated['account_code'])
             ->where('id', '!=', $account->id)
             ->exists();
 
@@ -299,8 +299,8 @@ class AccountController extends Controller
             $query->where('is_main', false);
         }
 
-        $accounts = $query->orderBy('account_code')
-            ->get(['id', 'account_code', 'name']);
+        $accounts = $query->orderBy('code')
+            ->get(['id', 'code', 'name']);
 
         return response()->json($accounts);
     }
