@@ -7,6 +7,7 @@ use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\GuideController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,3 +41,8 @@ Route::resource('companies', CompanyController::class);
 // الوحدات
 Route::resource('units', UnitController::class);
 Route::get('units/get-by-company', [UnitController::class, 'getByCompany'])->name('units.get-by-company');
+
+// دليل النظام
+Route::get('guide', [GuideController::class, 'index'])->name('guide.index');
+Route::get('guide/download-pdf', [GuideController::class, 'downloadGuidePdf'])->name('guide.download-pdf');
+Route::get('guide/download-changelog-pdf', [GuideController::class, 'downloadChangelogPdf'])->name('guide.download-changelog-pdf');

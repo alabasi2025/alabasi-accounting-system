@@ -30,6 +30,7 @@
                     <a href="#"><i class="bi bi-people"></i> الحسابات التحليلية</a>
                     <a href="#"><i class="bi bi-file-earmark-text"></i> التقارير</a>
                     <a href="#"><i class="bi bi-gear"></i> الإعدادات</a>
+                    <a href="{{ route('guide.index') }}"><i class="bi bi-book"></i> الدليل</a>
                 </nav>
             </div>
 
