@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\JournalEntryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+// دليل الحسابات
+Route::resource('accounts', AccountController::class);
+
+// القيود اليومية
+Route::resource('journal-entries', JournalEntryController::class);

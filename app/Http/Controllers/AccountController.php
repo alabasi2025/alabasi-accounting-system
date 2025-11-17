@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
@@ -11,7 +12,12 @@ class AccountController extends Controller
      */
     public function index()
     {
-        //
+        $accounts = Account::with('parent')
+            ->whereNull('parent_id')
+            ->orderBy('code')
+            ->get();
+        
+        return view('accounts.index', compact('accounts'));
     }
 
     /**
@@ -19,7 +25,11 @@ class AccountController extends Controller
      */
     public function create()
     {
-        //
+        $parent_accounts = Account::where('is_parent', true)
+            ->orderBy('code')
+            ->get();
+        
+        return view('accounts.create', compact('parent_accounts'));
     }
 
     /**
@@ -27,7 +37,18 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'code' => 'required|unique:accounts',
+            'name_ar' => 'required',
+            'parent_id' => 'nullable|exists:accounts,id',
+            'allow_posting' => 'boolean',
+        ]);
+
+        $validated['created_by'] = auth()->id();
+        Account::create($validated);
+
+        return redirect()->route('accounts.index')
+            ->with('success', 'تم إضافة الحساب بنجاح');
     }
 
     /**
