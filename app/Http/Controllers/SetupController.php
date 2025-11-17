@@ -29,15 +29,15 @@ class SetupController extends Controller
 
             // 1. إنشاء الوحدات
             $unitHd = Unit::create([
-                'code' => 'UNIT-HD',
-                'name' => 'وحدة أعمال الحديدة',
+                'unit_code' => 'UNIT-HD',
+                'unit_name' => 'وحدة أعمال الحديدة',
                 'description' => 'وحدة أعمال الحديدة',
                 'is_active' => true,
             ]);
 
             $unitAb = Unit::create([
-                'code' => 'UNIT-AB',
-                'name' => 'وحدة أعمال العباسي',
+                'unit_code' => 'UNIT-AB',
+                'unit_name' => 'وحدة أعمال العباسي',
                 'description' => 'وحدة أعمال العباسي',
                 'is_active' => true,
             ]);
@@ -45,48 +45,48 @@ class SetupController extends Controller
             // 2. إنشاء المؤسسات في وحدة أعمال الحديدة
             $comEmp = Company::create([
                 'unit_id' => $unitHd->id,
-                'code' => 'COM-EMP',
-                'name' => 'مؤسسة أعمال الموظفين',
+                'company_code' => 'COM-EMP',
+                'company_name' => 'مؤسسة أعمال الموظفين',
                 'description' => 'مؤسسة أعمال الموظفين',
                 'is_active' => true,
             ]);
 
             $comAcc = Company::create([
                 'unit_id' => $unitHd->id,
-                'code' => 'COM-ACC',
-                'name' => 'مؤسسة أعمال المحاسب',
+                'company_code' => 'COM-ACC',
+                'company_name' => 'مؤسسة أعمال المحاسب',
                 'description' => 'مؤسسة أعمال المحاسب',
                 'is_active' => true,
             ]);
 
             Company::create([
                 'unit_id' => $unitHd->id,
-                'code' => 'COM-SYS',
-                'name' => 'مؤسسة الأنظمة',
+                'company_code' => 'COM-SYS',
+                'company_name' => 'مؤسسة الأنظمة',
                 'description' => 'مؤسسة الأنظمة',
                 'is_active' => true,
             ]);
 
             Company::create([
                 'unit_id' => $unitHd->id,
-                'code' => 'COM-BUD',
-                'name' => 'مؤسسة الميزانية التقديرية',
+                'company_code' => 'COM-BUD',
+                'company_name' => 'مؤسسة الميزانية التقديرية',
                 'description' => 'مؤسسة الميزانية التقديرية',
                 'is_active' => true,
             ]);
 
             Company::create([
                 'unit_id' => $unitHd->id,
-                'code' => 'COM-PL',
-                'name' => 'مؤسسة الأرباح والخسائر',
+                'company_code' => 'COM-PL',
+                'company_name' => 'مؤسسة الأرباح والخسائر',
                 'description' => 'مؤسسة الأرباح والخسائر',
                 'is_active' => true,
             ]);
 
             Company::create([
                 'unit_id' => $unitHd->id,
-                'code' => 'COM-MA',
-                'name' => 'مؤسسة محمدي والعباس',
+                'company_code' => 'COM-MA',
+                'company_name' => 'مؤسسة محمدي والعباس',
                 'description' => 'مؤسسة محمدي والعباس',
                 'is_active' => true,
             ]);
@@ -94,26 +94,26 @@ class SetupController extends Controller
             // 3. إنشاء مؤسسة النقدية في وحدة أعمال العباسي
             $comCash = Company::create([
                 'unit_id' => $unitAb->id,
-                'code' => 'COM-CASH',
-                'name' => 'مؤسسة النقدية',
+                'company_code' => 'COM-CASH',
+                'company_name' => 'مؤسسة النقدية',
                 'description' => 'مؤسسة النقدية',
                 'is_active' => true,
             ]);
 
             // 4. إنشاء الفروع في مؤسسة أعمال الموظفين
             $branches = [
-                ['code' => 'BR-EMP-MAIN', 'name' => 'الفرع الرئيسي'],
-                ['code' => 'BR-EMP-DHM', 'name' => 'فرع الدهمية'],
-                ['code' => 'BR-EMP-GHL', 'name' => 'فرع غليل'],
-                ['code' => 'BR-EMP-SAB', 'name' => 'فرع الصبالية'],
-                ['code' => 'BR-EMP-JAM', 'name' => 'فرع جمال'],
+                ['branch_code' => 'BR-EMP-MAIN', 'name' => 'الفرع الرئيسي'],
+                ['branch_code' => 'BR-EMP-DHM', 'name' => 'فرع الدهمية'],
+                ['branch_code' => 'BR-EMP-GHL', 'name' => 'فرع غليل'],
+                ['branch_code' => 'BR-EMP-SAB', 'name' => 'فرع الصبالية'],
+                ['branch_code' => 'BR-EMP-JAM', 'name' => 'فرع جمال'],
             ];
 
             foreach ($branches as $branch) {
                 Branch::create([
                     'company_id' => $comEmp->id,
-                    'code' => $branch['code'],
-                    'name' => $branch['name'],
+                    'branch_code' => $branch['code'],
+                    'branch_name' => $branch['name'],
                     'description' => $branch['name'] . ' - أعمال الموظفين',
                     'is_active' => true,
                 ]);
@@ -121,18 +121,18 @@ class SetupController extends Controller
 
             // 5. إنشاء الفروع في مؤسسة أعمال المحاسب
             $branchesAcc = [
-                ['code' => 'BR-ACC-MAIN', 'name' => 'الفرع الرئيسي'],
-                ['code' => 'BR-ACC-DHM', 'name' => 'فرع الدهمية'],
-                ['code' => 'BR-ACC-GHL', 'name' => 'فرع غليل'],
-                ['code' => 'BR-ACC-SAB', 'name' => 'فرع الصبالية'],
-                ['code' => 'BR-ACC-JAM', 'name' => 'فرع جمال'],
+                ['branch_code' => 'BR-ACC-MAIN', 'name' => 'الفرع الرئيسي'],
+                ['branch_code' => 'BR-ACC-DHM', 'name' => 'فرع الدهمية'],
+                ['branch_code' => 'BR-ACC-GHL', 'name' => 'فرع غليل'],
+                ['branch_code' => 'BR-ACC-SAB', 'name' => 'فرع الصبالية'],
+                ['branch_code' => 'BR-ACC-JAM', 'name' => 'فرع جمال'],
             ];
 
             foreach ($branchesAcc as $branch) {
                 Branch::create([
                     'company_id' => $comAcc->id,
-                    'code' => $branch['code'],
-                    'name' => $branch['name'],
+                    'branch_code' => $branch['code'],
+                    'branch_name' => $branch['name'],
                     'description' => $branch['name'] . ' - أعمال المحاسب',
                     'is_active' => true,
                 ]);
@@ -141,7 +141,7 @@ class SetupController extends Controller
             // 6. إنشاء الفرع الرئيسي في مؤسسة النقدية
             Branch::create([
                 'company_id' => $comCash->id,
-                'code' => 'BR-CASH-MAIN',
+                'branch_code' => 'BR-CASH-MAIN',
                 'name' => 'الفرع الرئيسي',
                 'description' => 'الفرع الرئيسي - مؤسسة النقدية',
                 'is_active' => true,

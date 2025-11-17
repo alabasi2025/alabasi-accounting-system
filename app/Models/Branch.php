@@ -10,7 +10,7 @@ class Branch extends Model
     use HasFactory;
 
     protected $fillable = [
-        'unit_id',
+        'company_id',
         'branch_code',
         'branch_name',
         'address',
@@ -25,19 +25,11 @@ class Branch extends Model
     ];
 
     /**
-     * علاقة الفرع مع الوحدة
-     */
-    public function unit()
-    {
-        return $this->belongsTo(Unit::class);
-    }
-
-    /**
-     * علاقة الفرع مع المؤسسة (عبر الوحدة)
+     * علاقة الفرع مع المؤسسة
      */
     public function company()
     {
-        return $this->hasOneThrough(Company::class, Unit::class, 'id', 'id', 'unit_id', 'company_id');
+        return $this->belongsTo(Company::class);
     }
 
     public function accounts()
