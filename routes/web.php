@@ -11,6 +11,7 @@ use App\Http\Controllers\GuideController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AnalyticalAccountTypeController;
 use App\Http\Controllers\AnalyticalAccountController;
+use App\Http\Controllers\SetupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,11 @@ use App\Http\Controllers\AnalyticalAccountController;
 */
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+// إعداد النظام
+Route::get('/setup', [SetupController::class, 'index'])->name('setup.index');
+Route::post('/setup/execute', [SetupController::class, 'execute'])->name('setup.execute');
+Route::delete('/setup/reset', [SetupController::class, 'reset'])->name('setup.reset');
 
 // دليل الحسابات
 Route::resource('accounts', AccountController::class);
