@@ -10,6 +10,7 @@ class Company extends Model
     use HasFactory;
 
     protected $fillable = [
+        'unit_id',
         'company_code',
         'company_name',
         'description',
@@ -28,19 +29,19 @@ class Company extends Model
     ];
 
     /**
-     * علاقة المؤسسة مع الوحدات
+     * علاقة المؤسسة مع الوحدة (المؤسسة تنتمي إلى وحدة واحدة)
      */
-    public function units()
+    public function unit()
     {
-        return $this->hasMany(Unit::class);
+        return $this->belongsTo(Unit::class);
     }
 
     /**
-     * علاقة المؤسسة مع الفروع (عبر الوحدات)
+     * علاقة المؤسسة مع الفروع
      */
     public function branches()
     {
-        return $this->hasManyThrough(Branch::class, Unit::class);
+        return $this->hasMany(Branch::class);
     }
 
     /**
@@ -65,6 +66,22 @@ class Company extends Model
     public function journalEntries()
     {
         return $this->hasMany(JournalEntry::class);
+    }
+
+    /**
+     * علاقة المؤسسة مع أنواع الحسابات
+     */
+    public function accountTypes()
+    {
+        return $this->hasMany(AccountType::class);
+    }
+
+    /**
+     * علاقة المؤسسة مع أنواع الحسابات التحليلية
+     */
+    public function analyticalAccountTypes()
+    {
+        return $this->hasMany(AnalyticalAccountType::class);
     }
 
     /**
