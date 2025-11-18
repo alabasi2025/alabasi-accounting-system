@@ -201,12 +201,14 @@
 </div>
 
 <!-- مولد الرموز التلقائي -->
-<script src="{{ asset('js/auto-code-generator.js') }}"></script>
+<script src="{{ asset('js/auto-code-generator.js?v=2') }}"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded - initializing code generator');
     // تفعيل مولد الرموز التلقائي
     linkNameToCode('branch_name', 'branch_code', 'BR', 15);
+    console.log('Code generator initialized');
 });
 
 // تصفية المؤسسات بناءً على الوحدة المختارة

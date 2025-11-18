@@ -94,20 +94,30 @@ function linkNameToCode(nameFieldId, codeFieldId, prefix = '', maxLength = 10) {
     const nameField = document.getElementById(nameFieldId);
     const codeField = document.getElementById(codeFieldId);
     
+    console.log('linkNameToCode called:', nameFieldId, codeFieldId, prefix, maxLength);
+    console.log('nameField:', nameField);
+    console.log('codeField:', codeField);
+    
     if (!nameField || !codeField) {
         console.error('Name field or code field not found');
         return;
     }
+    
+    console.log('Fields found successfully');
     
     // متغير لتتبع ما إذا كان المستخدم عدل الرمز يدوياً
     let manuallyEdited = false;
     
     // عند تغيير حقل الاسم
     nameField.addEventListener('input', function() {
+        console.log('Name field input event triggered:', this.value);
         // إذا لم يتم التعديل يدوياً، نولد الرمز تلقائياً
         if (!manuallyEdited) {
             const generatedCode = generateCode(this.value, prefix, maxLength);
+            console.log('Generated code:', generatedCode);
             codeField.value = generatedCode;
+        } else {
+            console.log('Skipped - manually edited');
         }
     });
     
