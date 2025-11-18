@@ -145,6 +145,19 @@ Route::get('/manual', [App\Http\Controllers\ManualController::class, 'index'])->
 Route::post('/api/manual/update', [App\Http\Controllers\ManualController::class, 'update'])->name('manual.update');
 Route::get('/manual/export', [App\Http\Controllers\ManualController::class, 'export'])->name('manual.export');
 
+// سجل التحديثات
+Route::get('/updates', [App\Http\Controllers\UpdateController::class, 'index'])->name('updates.index');
+Route::post('/api/updates/sync', [App\Http\Controllers\UpdateController::class, 'sync'])->name('updates.sync');
+
+// الصناديق والبنوك
+Route::resource('cashboxes', App\Http\Controllers\CashBoxController::class);
+Route::resource('bank-accounts', App\Http\Controllers\BankAccountController::class);
+
+// العملاء والموردين والموظفين
+Route::resource('customers', App\Http\Controllers\CustomerController::class);
+Route::resource('suppliers', App\Http\Controllers\SupplierController::class);
+Route::resource('employees', App\Http\Controllers\EmployeeController::class);
+
 // التحويلات بين المؤسسات والوحدات (جديد)
 Route::resource('clearing-transactions', ClearingTransactionController::class);
 Route::post('clearing-transactions/{id}/approve', [ClearingTransactionController::class, 'approve'])->name('clearing-transactions.approve');
