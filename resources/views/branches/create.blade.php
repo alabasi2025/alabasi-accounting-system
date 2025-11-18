@@ -55,38 +55,17 @@
                                 @enderror
                             </div>
 
-                            <!-- المؤسسة -->
-                            <div class="col-md-6 mb-3">
-                                <label for="company_id" class="form-label">
-                                    <i class="fas fa-city text-primary me-1"></i>
-                                    المؤسسة <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select @error('company_id') is-invalid @enderror" 
-                                        id="company_id" 
-                                        name="company_id" 
-                                        required>
-                                    <option value="">اختر المؤسسة</option>
-                                    @foreach($companies as $company)
-                                        <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
-                                            {{ $company->company_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('company_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
                             <!-- الوحدة -->
                             <div class="col-md-6 mb-3">
                                 <label for="unit_id" class="form-label">
                                     <i class="fas fa-layer-group text-primary me-1"></i>
-                                    الوحدة
+                                    الوحدة <span class="text-danger">*</span>
                                 </label>
                                 <select class="form-select @error('unit_id') is-invalid @enderror" 
                                         id="unit_id" 
-                                        name="unit_id">
-                                    <option value="">اختر الوحدة (اختياري)</option>
+                                        name="unit_id"
+                                        required>
+                                    <option value="">اختر الوحدة</option>
                                     @foreach($units as $unit)
                                         <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
                                             {{ $unit->unit_name }}
@@ -96,6 +75,25 @@
                                 @error('unit_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+
+                            <!-- المؤسسة -->
+                            <div class="col-md-6 mb-3">
+                                <label for="company_id" class="form-label">
+                                    <i class="fas fa-city text-primary me-1"></i>
+                                    المؤسسة <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select @error('company_id') is-invalid @enderror" 
+                                        id="company_id" 
+                                        name="company_id" 
+                                        required
+                                        disabled>
+                                    <option value="">اختر الوحدة أولاً</option>
+                                </select>
+                                @error('company_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="form-text text-muted">سيتم عرض المؤسسات بعد اختيار الوحدة</small>
                             </div>
 
                             <!-- العنوان -->
@@ -201,4 +199,49 @@
         </div>
     </div>
 </div>
+
+<!-- مولد الرموز التلقائي -->
+<script src="{{ asset('js/auto-code-generator.js') }}"></script>
+
+<script>
+// تفعيل مولد الرموز التلقائي
+linkNameToCode('branch_name', 'branch_code', 'BR', 15);
+
+// تصفية المؤسسات بناءً على الوحدة المختارة
+document.getElementById('unit_id').addEventListener('change', function() {
+    const unitId = this.value;
+    const companySelect = document.getElementById('company_id');
+    
+    // إعادة تعيين قائمة المؤسسات
+    companySelect.innerHTML = '<option value="">جاري التحميل...</option>';
+    companySelect.disabled = true;
+    
+    if (unitId) {
+        // جلب المؤسسات التابعة للوحدة المختارة
+        fetch(`/api/companies-by-unit/${unitId}`)
+            .then(response => response.json())
+            .then(data => {
+                companySelect.innerHTML = '<option value="">اختر المؤسسة</option>';
+                
+                if (data.length > 0) {
+                    data.forEach(company => {
+                        const option = document.createElement('option');
+                        option.value = company.id;
+                        option.textContent = company.company_name;
+                        companySelect.appendChild(option);
+                    });
+                    companySelect.disabled = false;
+                } else {
+                    companySelect.innerHTML = '<option value="">لا توجد مؤسسات لهذه الوحدة</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                companySelect.innerHTML = '<option value="">حدث خطأ في التحميل</option>';
+            });
+    } else {
+        companySelect.innerHTML = '<option value="">اختر الوحدة أولاً</option>';
+    }
+});
+</script>
 @endsection
