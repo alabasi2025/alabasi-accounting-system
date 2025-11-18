@@ -11,6 +11,23 @@ use Illuminate\Support\Facades\DB;
 class UnitDatabaseSeeder extends Seeder
 {
     /**
+     * The command instance.
+     *
+     * @var \Illuminate\Console\Command|null
+     */
+    protected $command;
+
+    /**
+     * Set the command instance.
+     *
+     * @param \Illuminate\Console\Command $command
+     * @return void
+     */
+    public function setCommand($command)
+    {
+        $this->command = $command;
+    }
+    /**
      * Run the database seeds.
      *
      * @param string $connection اسم الـ connection (unit_2 أو unit_3)
