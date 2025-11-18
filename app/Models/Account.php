@@ -14,6 +14,7 @@ class Account extends Model
         'company_id',
         'account_type_id',
         'analytical_account_type_id',
+        'account_nature', // طبيعة الحساب
         'parent_id',
         'account_code',
         'code', // Alias for account_code
