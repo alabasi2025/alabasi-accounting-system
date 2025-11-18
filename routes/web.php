@@ -26,6 +26,69 @@ use App\Http\Controllers\ContextSelectorController;
 |
 */
 
+// صفحة تسجيل الدخول الجديدة
+Route::get('/login', function() {
+    session_start();
+    if (isset($_SESSION['unit_id'])) {
+        return redirect('/dashboard');
+    }
+    
+    $units = \App\Models\Main\Unit::all();
+    return view('login', compact('units'));
+})->name('login');
+
+Route::post('/login-process', function(\Illuminate\Http\Request $request) {
+    session_start();
+    
+    $unit_id = $request->input('unit_id');
+    $company_id = $request->input('company_id');
+    
+    if (!$unit_id) {
+        return redirect('/login?error=no_unit');
+    }
+    
+    $_SESSION['unit_id'] = $unit_id;
+    
+    if ($unit_id === 'main') {
+        $_SESSION['unit_name'] = 'القاعدة المركزية';
+        $_SESSION['database'] = 'main';
+        $_SESSION['is_main'] = true;
+    } else {
+        if (!$company_id) {
+            return redirect('/login?error=no_company');
+        }
+        
+        $unit = \App\Models\Main\Unit::find($unit_id);
+        $company = \App\Models\Main\Company::find($company_id);
+        
+        if (!$unit || !$company) {
+            return redirect('/login?error=invalid');
+        }
+        
+        $_SESSION['unit_name'] = $unit->name;
+        $_SESSION['company_id'] = $company_id;
+        $_SESSION['company_name'] = $company->name;
+        $_SESSION['database'] = $unit->database_name;
+        $_SESSION['is_main'] = false;
+    }
+    
+    return redirect('/dashboard');
+})->name('login.process');
+
+Route::get('/dashboard', function() {
+    session_start();
+    if (!isset($_SESSION['unit_id'])) {
+        return redirect('/login');
+    }
+    return view('new_dashboard');
+})->name('new.dashboard');
+
+Route::get('/logout', function() {
+    session_start();
+    session_destroy();
+    return redirect('/login');
+})->name('logout');
+
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // تغيير السياق (الوحدة والمؤسسة)
