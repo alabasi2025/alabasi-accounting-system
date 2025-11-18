@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             
             // معلومات الحساب
-            $table->string('account_number')->unique();
+            $table->string('account_number');
             $table->string('account_name');
             $table->text('description')->nullable();
             
@@ -59,6 +59,9 @@ return new class extends Migration
             $table->index('clearing_type');
             $table->index(['related_unit_id', 'related_company_id']);
             $table->index('parent_account_id');
+            
+            // Unique constraint على company_id + account_number
+            $table->unique(['company_id', 'account_number']);
         });
     }
 
