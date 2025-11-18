@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\CacheController;
+use App\Http\Controllers\Admin\QueueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +23,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/features', [AdminDashboardController::class, 'features'])->name('features');
     
     // إدارة الذاكرة المؤقتة
-    Route::get('/cache', [AdminDashboardController::class, 'cache'])->name('cache');
-    Route::post('/cache/clear', [AdminDashboardController::class, 'clearCache'])->name('cache.clear');
+    Route::get('/cache', [CacheController::class, 'index'])->name('cache');
+    Route::post('/cache/clear', [CacheController::class, 'clear'])->name('cache.clear');
+    Route::post('/cache/clear-config', [CacheController::class, 'clearConfig'])->name('cache.clear.config');
+    Route::post('/cache/clear-route', [CacheController::class, 'clearRoute'])->name('cache.clear.route');
+    Route::post('/cache/clear-view', [CacheController::class, 'clearView'])->name('cache.clear.view');
+    Route::post('/cache/optimize', [CacheController::class, 'optimize'])->name('cache.optimize');
     
     // إدارة قواعد البيانات
     Route::get('/database', [AdminDashboardController::class, 'database'])->name('database');
@@ -90,9 +96,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     
     // Queues & Jobs
     Route::prefix('queues')->name('queues.')->group(function () {
-        Route::get('/', function () {
-            return view('admin.queues.index');
-        })->name('index');
+        Route::get('/', [QueueController::class, 'index'])->name('index');
+        Route::get('/stats', [QueueController::class, 'stats'])->name('stats');
+        Route::post('/retry-failed', [QueueController::class, 'retryFailed'])->name('retry.failed');
+        Route::post('/clear-failed', [QueueController::class, 'clearFailed'])->name('clear.failed');
+        Route::get('/failed-jobs', [QueueController::class, 'failedJobs'])->name('failed.jobs');
     });
     
     // Middleware Management
