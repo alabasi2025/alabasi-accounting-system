@@ -18,7 +18,10 @@ class CashBoxController extends Controller
     public function create()
     {
         $branches = Branch::where('is_active', true)->get();
-        $accounts = Account::where('is_active', true)->get();
+        // عرض الحسابات من نوع "صندوق" فقط
+        $accounts = Account::where('is_active', true)
+            ->where('account_nature', 'cash_box')
+            ->get();
         return view('cashboxes.create', compact('branches', 'accounts'));
     }
 
@@ -51,7 +54,10 @@ class CashBoxController extends Controller
     public function edit(CashBox $cashbox)
     {
         $branches = Branch::where('is_active', true)->get();
-        $accounts = Account::where('is_active', true)->get();
+        // عرض الحسابات من نوع "صندوق" فقط
+        $accounts = Account::where('is_active', true)
+            ->where('account_nature', 'cash_box')
+            ->get();
         return view('cashboxes.edit', compact('cashbox', 'branches', 'accounts'));
     }
 

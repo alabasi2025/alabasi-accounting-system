@@ -18,7 +18,10 @@ class BankAccountController extends Controller
     public function create()
     {
         $branches = Branch::where('is_active', true)->get();
-        $accounts = Account::where('is_active', true)->get();
+        // عرض الحسابات من نوع "بنك" فقط
+        $accounts = Account::where('is_active', true)
+            ->where('account_nature', 'bank')
+            ->get();
         return view('bank_accounts.create', compact('branches', 'accounts'));
     }
 
@@ -52,7 +55,10 @@ class BankAccountController extends Controller
     public function edit(BankAccount $bankAccount)
     {
         $branches = Branch::where('is_active', true)->get();
-        $accounts = Account::where('is_active', true)->get();
+        // عرض الحسابات من نوع "بنك" فقط
+        $accounts = Account::where('is_active', true)
+            ->where('account_nature', 'bank')
+            ->get();
         return view('bank_accounts.edit', compact('bankAccount', 'branches', 'accounts'));
     }
 

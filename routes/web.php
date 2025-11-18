@@ -81,3 +81,8 @@ Route::post('/api/updates/sync', [App\Http\Controllers\UpdateController::class, 
 // الصناديق والبنوك
 Route::resource('cashboxes', App\Http\Controllers\CashBoxController::class);
 Route::resource('bank-accounts', App\Http\Controllers\BankAccountController::class);
+
+// العملاء والموردين والموظفين
+Route::resource('customers', App\Http\Controllers\CustomerController::class);
+Route::resource('suppliers', App\Http\Controllers\SupplierController::class);
+Route::resource('employees', App\Http\Controllers\EmployeeController::class);

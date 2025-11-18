@@ -184,8 +184,6 @@
                         <div class="collapse" id="accountingSettings">
                             <a href="{{ route('accounts.index') }}" class="sub-sub-item"><i class="bi bi-list-ul"></i> الدليل المحاسبي</a>
                             <a href="{{ route('account-types.index') }}" class="sub-sub-item"><i class="bi bi-tags"></i> أنواع الحسابات</a>
-                            <a href="{{ route('analytical-account-types.index') }}" class="sub-sub-item"><i class="bi bi-layers"></i> أنواع الحسابات التحليلية</a>
-                            <a href="{{ route('analytical-accounts.index') }}" class="sub-sub-item"><i class="bi bi-people"></i> الحسابات التحليلية</a>
                         </div>
                     </div>
                     
@@ -193,6 +191,9 @@
                     <a href="#" class="sub-item"><i class="bi bi-receipt"></i> السندات</a>
                     <a href="{{ route('cashboxes.index') }}" class="sub-item"><i class="bi bi-cash-stack"></i> الصناديق</a>
                     <a href="{{ route('bank-accounts.index') }}" class="sub-item"><i class="bi bi-bank"></i> الحسابات البنكية</a>
+                    <a href="{{ route('customers.index') }}" class="sub-item"><i class="bi bi-people"></i> العملاء</a>
+                    <a href="{{ route('suppliers.index') }}" class="sub-item"><i class="bi bi-truck"></i> الموردين</a>
+                    <a href="{{ route('employees.index') }}" class="sub-item"><i class="bi bi-person-badge"></i> الموظفين</a>
                 </div>
             </div>
             <a href="#"><i class="bi bi-file-earmark-text"></i> التقارير</a>

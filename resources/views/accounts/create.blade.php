@@ -147,27 +147,28 @@
                             </div>
                         </div>
 
-                        {{-- Analytical Account Type (only for sub accounts) --}}
-                        <div class="row" id="analytical_type_row" style="display: {{ old('is_main', $parentAccount ? '0' : '1') == '0' ? 'block' : 'none' }};">
+                        {{-- Account Nature (only for sub accounts) --}}
+                        <div class="row" id="account_nature_row" style="display: {{ old('is_main', $parentAccount ? '0' : '1') == '0' ? 'block' : 'none' }};">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="analytical_account_type_id">النوع التحليلي <span class="text-danger">*</span></label>
-                                    <select name="analytical_account_type_id" 
-                                            id="analytical_account_type_id" 
-                                            class="form-control @error('analytical_account_type_id') is-invalid @enderror">
-                                        <option value="">-- اختر النوع التحليلي --</option>
-                                        @foreach($analyticalAccountTypes as $type)
-                                            <option value="{{ $type->id }}" {{ old('analytical_account_type_id') == $type->id ? 'selected' : '' }}>
-                                                {{ $type->name }}
-                                            </option>
-                                        @endforeach
+                                    <label for="account_nature">طبيعة الحساب <span class="text-danger">*</span></label>
+                                    <select name="account_nature" 
+                                            id="account_nature" 
+                                            class="form-control @error('account_nature') is-invalid @enderror">
+                                        <option value="general" {{ old('account_nature', 'general') == 'general' ? 'selected' : '' }}>حساب عام</option>
+                                        <option value="cash_box" {{ old('account_nature') == 'cash_box' ? 'selected' : '' }}>💰 صندوق</option>
+                                        <option value="bank" {{ old('account_nature') == 'bank' ? 'selected' : '' }}>🏦 بنك</option>
+                                        <option value="customer" {{ old('account_nature') == 'customer' ? 'selected' : '' }}>👥 عميل</option>
+                                        <option value="supplier" {{ old('account_nature') == 'supplier' ? 'selected' : '' }}>🏭 مورد</option>
+                                        <option value="employee" {{ old('account_nature') == 'employee' ? 'selected' : '' }}>👔 موظف</option>
+                                        <option value="debtor" {{ old('account_nature') == 'debtor' ? 'selected' : '' }}>📗 حساب مدين</option>
+                                        <option value="creditor" {{ old('account_nature') == 'creditor' ? 'selected' : '' }}>📕 حساب دائن</option>
                                     </select>
-                                    @error('analytical_account_type_id')
+                                    @error('account_nature')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <small class="form-text text-muted">
-                                        مثل: صندوق، بنك، مورد، عميل... 
-                                        <a href="{{ route('analytical-account-types.create') }}" target="_blank">إضافة نوع تحليلي جديد</a>
+                                        حدد طبيعة الحساب ليظهر في الواجهات المناسبة
                                     </small>
                                 </div>
                             </div>
@@ -220,20 +221,20 @@
 function toggleAnalyticalType() {
     const isMain = document.querySelector('input[name="is_main"]:checked').value;
     const parentRow = document.getElementById('parent_account_row');
-    const analyticalRow = document.getElementById('analytical_type_row');
-    const analyticalSelect = document.getElementById('analytical_account_type_id');
+    const natureRow = document.getElementById('account_nature_row');
+    const natureSelect = document.getElementById('account_nature');
     
     if (isMain == '1') {
         // Main account
         parentRow.style.display = 'block';
-        analyticalRow.style.display = 'none';
-        analyticalSelect.removeAttribute('required');
-        analyticalSelect.value = '';
+        natureRow.style.display = 'none';
+        natureSelect.removeAttribute('required');
+        natureSelect.value = 'general';
     } else {
         // Sub account
         parentRow.style.display = 'none';
-        analyticalRow.style.display = 'block';
-        analyticalSelect.setAttribute('required', 'required');
+        natureRow.style.display = 'block';
+        natureSelect.setAttribute('required', 'required');
     }
 }
 

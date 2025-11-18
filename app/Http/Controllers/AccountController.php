@@ -72,7 +72,7 @@ class AccountController extends Controller
             'parent_id' => 'nullable|exists:accounts,id',
             'is_parent' => 'boolean',
             'allow_posting' => 'boolean',
-            'analytical_type' => 'nullable|string|max:50',
+            'account_nature' => 'nullable|string|in:general,cash_box,bank,customer,supplier,employee,debtor,creditor',
             'description' => 'nullable|string',
         ]);
 
