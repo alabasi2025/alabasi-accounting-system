@@ -68,3 +68,16 @@ Route::get('units/get-by-company', [UnitController::class, 'getByCompany'])->nam
 Route::get('guide', [GuideController::class, 'index'])->name('guide.index');
 Route::get('guide/download-pdf', [GuideController::class, 'downloadGuidePdf'])->name('guide.download-pdf');
 Route::get('guide/download-changelog-pdf', [GuideController::class, 'downloadChangelogPdf'])->name('guide.download-changelog-pdf');
+
+// دليل الاستخدام
+Route::get('/manual', [App\Http\Controllers\ManualController::class, 'index'])->name('manual.index');
+Route::post('/api/manual/update', [App\Http\Controllers\ManualController::class, 'update'])->name('manual.update');
+Route::get('/manual/export', [App\Http\Controllers\ManualController::class, 'export'])->name('manual.export');
+
+// سجل التحديثات
+Route::get('/updates', [App\Http\Controllers\UpdateController::class, 'index'])->name('updates.index');
+Route::post('/api/updates/sync', [App\Http\Controllers\UpdateController::class, 'sync'])->name('updates.sync');
+
+// الصناديق والبنوك
+Route::resource('cashboxes', App\Http\Controllers\CashBoxController::class);
+Route::resource('bank-accounts', App\Http\Controllers\BankAccountController::class);
