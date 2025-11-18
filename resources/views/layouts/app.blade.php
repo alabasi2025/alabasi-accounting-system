@@ -191,6 +191,8 @@
                     
                     <a href="{{ route('journal-entries.index') }}" class="sub-item"><i class="bi bi-journal-text"></i> القيود</a>
                     <a href="#" class="sub-item"><i class="bi bi-receipt"></i> السندات</a>
+                    <a href="{{ route('cashboxes.index') }}" class="sub-item"><i class="bi bi-cash-stack"></i> الصناديق</a>
+                    <a href="{{ route('bank-accounts.index') }}" class="sub-item"><i class="bi bi-bank"></i> الحسابات البنكية</a>
                 </div>
             </div>
             <a href="#"><i class="bi bi-file-earmark-text"></i> التقارير</a>
