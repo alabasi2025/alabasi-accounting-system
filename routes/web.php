@@ -162,3 +162,4 @@ Route::resource('employees', App\Http\Controllers\EmployeeController::class);
 Route::resource('clearing-transactions', ClearingTransactionController::class);
 Route::post('clearing-transactions/{id}/approve', [ClearingTransactionController::class, 'approve'])->name('clearing-transactions.approve');
 Route::post('clearing-transactions/{id}/cancel', [ClearingTransactionController::class, 'cancel'])->name('clearing-transactions.cancel');
+Route::post('clearing-transactions/{id}/sync', [ClearingTransactionController::class, 'sync'])->name('clearing-transactions.sync');

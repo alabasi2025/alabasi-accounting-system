@@ -85,6 +85,17 @@
                                            class="btn btn-sm btn-info" title="عرض">
                                             <i class="fas fa-eye"></i>
                                         </a>
+                                        @if($isMain && $transaction->status === 'pending' && $transaction->transaction_type === 'inter_unit')
+                                        <form action="{{ route('clearing-transactions.sync', $transaction->id) }}" 
+                                              method="POST" 
+                                              class="d-inline"
+                                              onsubmit="return confirm('هل أنت متأكد من ترحيل هذا التحويل؟')">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success" title="ترحيل">
+                                                <i class="fas fa-sync"></i>
+                                            </button>
+                                        </form>
+                                        @endif
                                     </td>
                                 </tr>
                                 @empty

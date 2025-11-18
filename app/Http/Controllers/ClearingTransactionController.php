@@ -127,4 +127,22 @@ class ClearingTransactionController extends Controller
 
         return back()->with('success', 'تم إلغاء التحويل');
     }
+
+    /**
+     * ترحيل/مزامنة تحويل بين وحدات
+     */
+    public function sync($id)
+    {
+        try {
+            $clearingTransaction = $this->clearingService->syncTransfer($id);
+
+            return redirect()
+                ->route('clearing-transactions.show', $id)
+                ->with('success', 'تم ترحيل التحويل بنجاح');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'فشل ترحيل التحويل: ' . $e->getMessage());
+        }
+    }
 }

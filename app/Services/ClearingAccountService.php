@@ -54,18 +54,25 @@ class ClearingAccountService
                 $data
             );
 
-            // إنشاء القيد في المؤسسة المستقبلة
-            $targetJournalEntry = $this->createTargetJournalEntry(
-                $clearingTransaction,
-                $data
-            );
-
-            // تحديث معرفات القيود في سجل التحويل
+            // تحديث معرف القيد المصدر
             $clearingTransaction->update([
                 'source_journal_entry_id' => $sourceJournalEntry->id,
-                'target_journal_entry_id' => $targetJournalEntry->id,
-                'status' => 'completed',
             ]);
+
+            // إذا كان تحويل بين مؤسسات (نفس الوحدة)، إنشاء القيد المستقبل مباشرة
+            if ($transactionType === 'inter_company') {
+                $targetJournalEntry = $this->createTargetJournalEntry(
+                    $clearingTransaction,
+                    $data
+                );
+
+                $clearingTransaction->update([
+                    'target_journal_entry_id' => $targetJournalEntry->id,
+                    'status' => 'completed',
+                ]);
+            }
+            // إذا كان تحويل بين وحدات، يبقى في حالة pending حتى يتم الترحيل
+            // من القاعدة المركزية
 
             DB::connection('main')->commit();
 
@@ -117,6 +124,11 @@ class ClearingAccountService
             // إنشاء رقم القيد
             $entryNumber = $this->generateEntryNumber($sourceConnection, $data['source_company_id']);
 
+            // تحديد نوع القيد
+            $entryType = $clearingTransaction->transaction_type === 'inter_company' 
+                ? 'inter_company_transfer' 
+                : 'inter_unit_transfer';
+
             // إنشاء القيد
             $journalEntry = JournalEntry::on($sourceConnection)->create([
                 'company_id' => $data['source_company_id'],
@@ -124,7 +136,7 @@ class ClearingAccountService
                 'entry_number' => $entryNumber,
                 'entry_date' => $data['entry_date'] ?? now(),
                 'description' => $data['description'] ?? 'تحويل إلى ' . $this->getTargetName($data),
-                'entry_type' => 'clearing',
+                'entry_type' => $entryType,
                 'clearing_transaction_id' => $clearingTransaction->id,
                 'status' => 'draft',
                 'created_by' => $data['user_id'] ?? null,
@@ -204,6 +216,11 @@ class ClearingAccountService
             // إنشاء رقم القيد
             $entryNumber = $this->generateEntryNumber($targetConnection, $data['target_company_id']);
 
+            // تحديد نوع القيد
+            $entryType = $clearingTransaction->transaction_type === 'inter_company' 
+                ? 'inter_company_transfer' 
+                : 'inter_unit_transfer';
+
             // إنشاء القيد
             $journalEntry = JournalEntry::on($targetConnection)->create([
                 'company_id' => $data['target_company_id'],
@@ -211,7 +228,7 @@ class ClearingAccountService
                 'entry_number' => $entryNumber,
                 'entry_date' => $data['entry_date'] ?? now(),
                 'description' => $data['description'] ?? 'تحويل من ' . $this->getSourceName($data),
-                'entry_type' => 'clearing',
+                'entry_type' => $entryType,
                 'clearing_transaction_id' => $clearingTransaction->id,
                 'status' => 'draft',
                 'created_by' => $data['user_id'] ?? null,
@@ -312,7 +329,7 @@ class ClearingAccountService
         $relatedName = $this->getRelatedName($relatedUnitId, $relatedCompanyId);
 
         // توليد رقم الحساب
-        $accountNumber = $this->generateClearingAccountNumber($connection, $companyId, $clearingType);
+        $accountNumber = $this->generateClearingAccountNumber($connection, $companyId, $clearingType, $relatedCompanyId);
 
         // إنشاء الحساب
         return Account::on($connection)->create([
@@ -338,25 +355,13 @@ class ClearingAccountService
      * @param string $clearingType
      * @return string
      */
-    protected function generateClearingAccountNumber(string $connection, int $companyId, string $clearingType): string
+    protected function generateClearingAccountNumber(string $connection, int $companyId, string $clearingType, int $relatedCompanyId): string
     {
-        // نطاق الأرقام: 9000-9499 للـ inter_company، 9500-9999 للـ inter_unit
-        $baseNumber = $clearingType === 'inter_company' ? 9000 : 9500;
+        // استخدام رقم فريد لكل مؤسسة: 9000 + company_id
+        // مثال: المؤسسة 1 → 9001، المؤسسة 2 → 9002، إلخ
+        $accountNumber = 9000 + $relatedCompanyId;
 
-        // البحث عن آخر رقم مستخدم
-        $lastAccount = Account::on($connection)
-            ->where('company_id', $companyId)
-            ->where('account_type', 'clearing')
-            ->where('clearing_type', $clearingType)
-            ->orderBy('account_number', 'desc')
-            ->first();
-
-        if ($lastAccount) {
-            $lastNumber = intval($lastAccount->account_number);
-            return strval($lastNumber + 1);
-        }
-
-        return strval($baseNumber + 1);
+        return strval($accountNumber);
     }
 
     /**
@@ -420,6 +425,103 @@ class ClearingAccountService
     {
         $company = MainCompany::find($data['target_company_id']);
         return $company ? $company->name : "مؤسسة #{$data['target_company_id']}";
+    }
+
+    /**
+     * Sync (post) a pending inter-unit transfer from the central database.
+     * This creates the target journal entry and marks the transfer as completed.
+     *
+     * @param int $clearingTransactionId
+     * @return ClearingTransaction
+     * @throws Exception
+     */
+    public function syncTransfer(int $clearingTransactionId): ClearingTransaction
+    {
+        // الحصول على سجل التحويل من القاعدة المركزية
+        $clearingTransaction = ClearingTransaction::findOrFail($clearingTransactionId);
+
+        // التحقق من أن التحويل في حالة pending
+        if ($clearingTransaction->status !== 'pending') {
+            throw new Exception('التحويل ليس في حالة انتظار');
+        }
+
+        // التحقق من أن التحويل بين وحدات
+        if ($clearingTransaction->transaction_type !== 'inter_unit') {
+            throw new Exception('هذا التحويل ليس بين وحدات');
+        }
+
+        DB::connection('main')->beginTransaction();
+
+        try {
+            // إعداد البيانات المطلوبة
+            $data = [
+                'source_unit_id' => $clearingTransaction->source_unit_id,
+                'source_company_id' => $clearingTransaction->source_company_id,
+                'target_unit_id' => $clearingTransaction->target_unit_id,
+                'target_company_id' => $clearingTransaction->target_company_id,
+                'target_account_id' => null, // سيتم الحصول عليه من القيد المصدر
+                'amount' => $clearingTransaction->amount,
+                'description' => $clearingTransaction->description,
+                'user_id' => auth()->id() ?? 1,
+            ];
+
+            // الحصول على الحساب المستهدف من القيد المصدر
+            $sourceUnit = Unit::find($clearingTransaction->source_unit_id);
+            $sourceConnection = $sourceUnit->database_name;
+            $sourceEntry = JournalEntry::on($sourceConnection)
+                ->find($clearingTransaction->source_journal_entry_id);
+            
+            if (!$sourceEntry) {
+                throw new Exception('لم يتم العثور على القيد المصدر');
+            }
+
+            // الحصول على الحساب المصدر من تفاصيل القيد
+            $sourceDetail = JournalEntryDetail::on($sourceConnection)
+                ->where('journal_entry_id', $sourceEntry->id)
+                ->where('credit', '>', 0)
+                ->first();
+
+            if (!$sourceDetail) {
+                throw new Exception('لم يتم العثور على تفاصيل القيد المصدر');
+            }
+
+            // استخدام نفس رقم الحساب في الوحدة المستهدفة
+            $sourceAccount = Account::on($sourceConnection)->find($sourceDetail->account_id);
+            $targetUnit = Unit::find($clearingTransaction->target_unit_id);
+            $targetConnection = $targetUnit->database_name;
+            $targetAccount = Account::on($targetConnection)
+                ->where('company_id', $clearingTransaction->target_company_id)
+                ->where('account_number', $sourceAccount->account_number)
+                ->first();
+
+            if (!$targetAccount) {
+                throw new Exception('لم يتم العثور على الحساب المستهدف');
+            }
+
+            $data['target_account_id'] = $targetAccount->id;
+
+            // إنشاء القيد في المؤسسة المستقبلة
+            $targetJournalEntry = $this->createTargetJournalEntry(
+                $clearingTransaction,
+                $data
+            );
+
+            // تحديث سجل التحويل
+            $clearingTransaction->update([
+                'target_journal_entry_id' => $targetJournalEntry->id,
+                'status' => 'completed',
+                'synced_at' => now(),
+                'synced_by' => auth()->id() ?? 1,
+            ]);
+
+            DB::connection('main')->commit();
+
+            return $clearingTransaction;
+
+        } catch (Exception $e) {
+            DB::connection('main')->rollBack();
+            throw new Exception('فشل ترحيل التحويل: ' . $e->getMessage());
+        }
     }
 
     /**
