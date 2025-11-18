@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-// التحقق من تسجيل الدخول
-if (!isset($_SESSION['unit_id'])) {
+// التحقق من تسجيل الدخول واختيار القاعدة
+if (!isset($_SESSION['unit_id']) || !isset($_SESSION['database'])) {
     header('Location: login.php');
     exit;
 }
