@@ -174,3 +174,6 @@ Route::get('clearing-transactions-report', [ClearingTransactionController::class
 // API endpoints للتحويلات
 Route::get('/api/units/{unitId}/companies', [ClearingTransactionController::class, 'getCompaniesByUnit']);
 Route::get('/api/units/{unitId}/companies/{companyId}/accounts', [ClearingTransactionController::class, 'getAccountsByCompany']);
+
+// مسارات الوحدة المركزية - جميع الميزات المتقدمة
+require __DIR__.'/admin.php';

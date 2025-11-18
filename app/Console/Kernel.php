@@ -12,7 +12,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // مثال: نسخ احتياطي يومي في الساعة 2 صباحاً
+        // $schedule->command('backup:run')->daily()->at('02:00');
+
+        // مثال: مسح الذاكرة المؤقتة أسبوعياً
+        // $schedule->command('cache:clear')->weekly();
+
+        // مثال: تنظيف Telescope يومياً
+        $schedule->command('telescope:prune')->daily();
+
+        // مثال: تحديث الإحصائيات كل ساعة
+        $schedule->call(function () {
+            \Illuminate\Support\Facades\Cache::forget('admin_stats');
+        })->hourly();
     }
 
     /**
