@@ -26,6 +26,11 @@ use App\Http\Controllers\ContextSelectorController;
 |
 */
 
+// صفحة اختبار
+Route::get('/test-login', function() {
+    return view('test_login');
+});
+
 // صفحة تسجيل الدخول الجديدة
 Route::get('/login', function() {
     if (session('unit_id')) {
