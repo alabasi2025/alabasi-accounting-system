@@ -14,6 +14,7 @@ return new class extends Migration
         // حذف عمود company_id من جدول accounts
         if (Schema::hasColumn('accounts', 'company_id')) {
             Schema::table('accounts', function (Blueprint $table) {
+                $table->dropForeign(['company_id']);
                 $table->dropColumn('company_id');
             });
         }
@@ -21,6 +22,7 @@ return new class extends Migration
         // حذف عمود company_id من جدول account_types
         if (Schema::hasColumn('account_types', 'company_id')) {
             Schema::table('account_types', function (Blueprint $table) {
+                $table->dropForeign(['company_id']);
                 $table->dropColumn('company_id');
             });
         }
@@ -28,6 +30,7 @@ return new class extends Migration
         // حذف عمود company_id من جدول analytical_accounts
         if (Schema::hasColumn('analytical_accounts', 'company_id')) {
             Schema::table('analytical_accounts', function (Blueprint $table) {
+                $table->dropForeign(['company_id']);
                 $table->dropColumn('company_id');
             });
         }
@@ -35,6 +38,7 @@ return new class extends Migration
         // حذف عمود company_id من جدول analytical_account_types
         if (Schema::hasColumn('analytical_account_types', 'company_id')) {
             Schema::table('analytical_account_types', function (Blueprint $table) {
+                $table->dropForeign(['company_id']);
                 $table->dropColumn('company_id');
             });
         }
@@ -42,6 +46,7 @@ return new class extends Migration
         // حذف عمود company_id من جدول branches
         if (Schema::hasColumn('branches', 'company_id')) {
             Schema::table('branches', function (Blueprint $table) {
+                $table->dropForeign(['company_id']);
                 $table->dropColumn('company_id');
             });
         }
@@ -49,6 +54,7 @@ return new class extends Migration
         // حذف عمود company_id من جدول vouchers
         if (Schema::hasColumn('vouchers', 'company_id')) {
             Schema::table('vouchers', function (Blueprint $table) {
+                $table->dropForeign(['company_id']);
                 $table->dropColumn('company_id');
             });
         }
