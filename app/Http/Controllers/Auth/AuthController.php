@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
+use App\Models\Main\Unit;
+use App\Models\Main\Company;
 
 class AuthController extends Controller
 {
@@ -15,7 +17,10 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login');
+        $units = Unit::where('is_active', true)->get();
+        $companies = Company::where('is_active', true)->get();
+        
+        return view('auth.login', compact('units', 'companies'));
     }
 
     /**
@@ -25,9 +30,14 @@ class AuthController extends Controller
     {
         // التحقق من البيانات
         $request->validate([
+            'unit_id' => ['required', 'exists:units,id'],
+            'company_id' => ['nullable', 'exists:companies,id'],
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ], [
+            'unit_id.required' => 'الوحدة مطلوبة',
+            'unit_id.exists' => 'الوحدة المختارة غير موجودة',
+            'company_id.exists' => 'المؤسسة المختارة غير موجودة',
             'email.required' => 'البريد الإلكتروني مطلوب',
             'email.email' => 'البريد الإلكتروني غير صحيح',
             'password.required' => 'كلمة المرور مطلوبة',
@@ -39,6 +49,10 @@ class AuthController extends Controller
         // محاولة تسجيل الدخول
         if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
+            
+            // حفظ معلومات الوحدة والمؤسسة في الجلسة
+            $request->session()->put('unit_id', $request->unit_id);
+            $request->session()->put('company_id', $request->company_id);
             
             // مسح محاولات الدخول الفاشلة
             RateLimiter::clear($this->throttleKey($request));
