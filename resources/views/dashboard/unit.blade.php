@@ -1,110 +1,43 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ session('unit_name') }} - نظام Alabasi</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .header h1 {
-            font-size: 24px;
-        }
-        
-        .header .user-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .header .user-info span {
-            background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        
-        .header a {
-            color: white;
-            text-decoration: none;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: background 0.3s;
-        }
-        
-        .header a:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        
-        .welcome {
-            background: white;
-            padding: 60px;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        
-        .welcome h2 {
-            color: #667eea;
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-        
-        .welcome p {
-            color: #666;
-            font-size: 18px;
-            line-height: 1.8;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>🏢 {{ isset($currentUnit) ? $currentUnit->name : 'نظام Alabasi المحاسبي' }}</h1>
-        <div class="user-info">
-            @if(isset($currentUnit))
-            <span>📍 {{ $currentUnit->name }}</span>
-            @endif
-            @if(isset($currentCompany))
-            <span>🏪 {{ $currentCompany->name }}</span>
-            @endif
-            <a href="/logout">🚪 خروج</a>
-        </div>
-    </div>
+@extends('layouts.dashboard')
+
+@section('title', 'لوحة التحكم - وحدة أعمال الحديدة')
+
+@section('page-title', 'وحدة أعمال الحديدة')
+
+@section('styles')
+<style>
+    .welcome-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
     
-    <div class="container">
-        <div class="welcome">
-            <h2>مرحباً بك في {{ isset($currentUnit) ? $currentUnit->name : 'نظام Alabasi' }}</h2>
-            @if(isset($currentCompany))
-            <p>المؤسسة: <strong>{{ $currentCompany->name }}</strong> (الكود: {{ $currentCompany->code }})</p>
-            @endif
-            <p>هذه الواجهة قيد التطوير. سيتم إضافة المزيد من الميزات قريباً.</p>
-        </div>
-    </div>
-</body>
-</html>
+    .welcome-banner h2 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    .welcome-banner p {
+        font-size: 16px;
+        opacity: 0.9;
+        margin: 0;
+    }
+</style>
+@endsection
+
+@section('content')
+<!-- Welcome Banner -->
+<div class="welcome-banner">
+    <h2><i class="fas fa-building"></i> مرحباً بك في وحدة أعمال الحديدة</h2>
+    <p>نظام محاسبي متكامل لإدارة جميع العمليات المالية والمحاسبية</p>
+</div>
+
+<div class="alert alert-success">
+    <h4>✅ النظام جاهز!</h4>
+    <p>جميع التبويبات متاحة في القائمة الجانبية</p>
+</div>
+@endsection
