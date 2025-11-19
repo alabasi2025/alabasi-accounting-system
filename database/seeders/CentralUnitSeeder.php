@@ -45,16 +45,15 @@ class CentralUnitSeeder extends Seeder
             // 2. التحقق من وجود مؤسسة للوحدة المركزية
             $centralCompany = DB::table('companies')
                 ->where('unit_id', $unitId)
-                ->where('company_code', 'CENTRAL001')
+                ->where('code', 'CENTRAL001')
                 ->first();
 
             if (!$centralCompany) {
                 // إنشاء مؤسسة للوحدة المركزية
                 $companyId = DB::table('companies')->insertGetId([
                     'unit_id' => $unitId,
-                    'company_code' => 'CENTRAL001',
-                    'company_name' => 'المؤسسة المركزية',
-                    'company_name_en' => 'Central Organization',
+                    'code' => 'CENTRAL001',
+                    'name' => 'المؤسسة المركزية',
                     'tax_number' => '9999999999',
                     'phone' => '0500000000',
                     'email' => 'central@alabasi.es',
