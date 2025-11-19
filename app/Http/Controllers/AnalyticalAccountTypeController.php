@@ -20,7 +20,7 @@ class AnalyticalAccountTypeController extends Controller
                 ->with('error', 'يجب إنشاء مؤسسة أولاً قبل إدارة أنواع الحسابات التحليلية');
         }
 
-        $query = AnalyticalAccountType::where('company_id', $company->id);
+        $query = AnalyticalAccountType::;
 
         // Apply filters
         if ($request->filled('search')) {
@@ -75,7 +75,7 @@ class AnalyticalAccountTypeController extends Controller
         }
 
         // Check if code already exists for this company
-        $exists = AnalyticalAccountType::where('company_id', $company->id)
+        $exists = AnalyticalAccountType::
             ->where('code', $validated['code'])
             ->exists();
 
@@ -123,7 +123,7 @@ class AnalyticalAccountTypeController extends Controller
         ]);
 
         // Check if code already exists for this company (excluding current record)
-        $exists = AnalyticalAccountType::where('company_id', $analyticalAccountType->company_id)
+        $exists = AnalyticalAccountType::
             ->where('code', $validated['code'])
             ->where('id', '!=', $analyticalAccountType->id)
             ->exists();

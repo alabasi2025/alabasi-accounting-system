@@ -28,7 +28,6 @@ class Voucher extends Model
         'description',
         'notes',
         'unit_id',
-        'company_id',
         'branch_id',
         'status',
         'journal_entry_id',
@@ -140,10 +139,6 @@ class Voucher extends Model
     /**
      * العلاقة مع المؤسسة
      */
-    public function company()
-    {
-        return $this->belongsTo(Company::class, 'company_id');
-    }
 
     /**
      * العلاقة مع الفرع
@@ -244,10 +239,6 @@ class Voucher extends Model
     /**
      * Scope: حسب المؤسسة
      */
-    public function scopeForCompany($query, $companyId)
-    {
-        return $query->where('company_id', $companyId);
-    }
 
     /**
      * Scope: حسب الفرع

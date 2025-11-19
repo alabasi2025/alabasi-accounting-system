@@ -10,7 +10,6 @@ class AccountType extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_id',
         'code',
         'name',
         'nature',
@@ -21,14 +20,6 @@ class AccountType extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
-    /**
-     * العلاقة مع المؤسسة
-     */
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
-    }
 
     /**
      * العلاقة مع الحسابات
@@ -44,14 +35,6 @@ class AccountType extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
-    }
-
-    /**
-     * Scope: حسب المؤسسة
-     */
-    public function scopeForCompany($query, $companyId)
-    {
-        return $query->where('company_id', $companyId);
     }
 
     /**

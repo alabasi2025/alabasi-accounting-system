@@ -36,7 +36,7 @@ class AnalyticalAccountController extends Controller
             return redirect()->route('companies.index')->with('error', 'المؤسسة المحددة غير موجودة');
         }
 
-        $query = AnalyticalAccount::where('company_id', $company->id)
+        $query = AnalyticalAccount::
             ->with(['analyticalAccountType', 'account']);
 
         if ($request->filled('analytical_account_type_id')) {
@@ -57,7 +57,7 @@ class AnalyticalAccountController extends Controller
 
         $analyticalAccounts = $query->orderBy('code')->paginate(20);
 
-        $analyticalAccountTypes = AnalyticalAccountType::where('company_id', $company->id)
+        $analyticalAccountTypes = AnalyticalAccountType::
             ->where('is_active', true)
             ->orderBy('code')
             ->get();
@@ -76,7 +76,7 @@ class AnalyticalAccountController extends Controller
         $analyticalAccountTypeId = $request->get('analytical_account_type_id');
         $analyticalAccountType = $analyticalAccountTypeId ? AnalyticalAccountType::find($analyticalAccountTypeId) : null;
 
-        $analyticalAccountTypes = AnalyticalAccountType::where('company_id', $company->id)
+        $analyticalAccountTypes = AnalyticalAccountType::
             ->where('is_active', true)
             ->orderBy('code')
             ->get();
@@ -84,7 +84,7 @@ class AnalyticalAccountController extends Controller
         $accounts = collect();
         if ($analyticalAccountType) {
             // عرض الحسابات من نوع "تحليلي" فقط
-            $accounts = Account::where('company_id', $company->id)
+            $accounts = Account::
                 ->where('account_nature', 'analytical')
                 ->where('is_main', false)
                 ->where('is_active', true)
@@ -113,7 +113,7 @@ class AnalyticalAccountController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $exists = AnalyticalAccount::where('company_id', $company->id)
+        $exists = AnalyticalAccount::
             ->where('code', $validated['code'])
             ->exists();
 
@@ -133,13 +133,13 @@ class AnalyticalAccountController extends Controller
     {
         $company = $analyticalAccount->company;
 
-        $analyticalAccountTypes = AnalyticalAccountType::where('company_id', $company->id)
+        $analyticalAccountTypes = AnalyticalAccountType::
             ->where('is_active', true)
             ->orderBy('code')
             ->get();
 
         // عرض الحسابات من نوع "تحليلي" فقط
-        $accounts = Account::where('company_id', $company->id)
+        $accounts = Account::
             ->where('account_nature', 'analytical')
             ->where('is_main', false)
             ->where('is_active', true)
@@ -161,7 +161,7 @@ class AnalyticalAccountController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $exists = AnalyticalAccount::where('company_id', $analyticalAccount->company_id)
+        $exists = AnalyticalAccount::
             ->where('code', $validated['code'])
             ->where('id', '!=', $analyticalAccount->id)
             ->exists();
@@ -197,7 +197,7 @@ class AnalyticalAccountController extends Controller
             return response()->json(['error' => 'Analytical account type ID is required'], 400);
         }
 
-        $accounts = Account::where('company_id', $company->id)
+        $accounts = Account::
             ->where('analytical_account_type_id', $analyticalAccountTypeId)
             ->where('is_main', false)
             ->where('is_active', true)

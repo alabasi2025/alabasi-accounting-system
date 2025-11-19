@@ -10,7 +10,6 @@ class AnalyticalAccount extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_id',
         'analytical_account_type_id',
         'account_id',
         'code',
@@ -23,14 +22,6 @@ class AnalyticalAccount extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
-    /**
-     * العلاقة مع المؤسسة
-     */
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
-    }
 
     /**
      * العلاقة مع نوع الحساب التحليلي
@@ -62,14 +53,6 @@ class AnalyticalAccount extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
-    }
-
-    /**
-     * Scope: حسب المؤسسة
-     */
-    public function scopeForCompany($query, $companyId)
-    {
-        return $query->where('company_id', $companyId);
     }
 
     /**

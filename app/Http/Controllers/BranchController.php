@@ -15,7 +15,7 @@ class BranchController extends Controller
         
         $branches = Branch::with(['company', 'unit'])
             ->when($selectedCompanyId, function($query) use ($selectedCompanyId) {
-                return $query->where('company_id', $selectedCompanyId);
+                return $query->;
             })
             ->orderBy('branch_code')
             ->get();
