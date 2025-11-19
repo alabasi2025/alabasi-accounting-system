@@ -72,15 +72,6 @@ class DashboardController extends Controller
                 ->orderBy('month')
                 ->get();
             
-            // إحصائيات حسب النوع
-            $type_stats = ClearingTransaction::selectRaw('
-                    type,
-                    COUNT(*) as count,
-                    SUM(amount) as total_amount
-                ')
-                ->groupBy('type')
-                ->get();
-            
             return view('dashboard.main', compact(
                 'total_units',
                 'total_companies',
@@ -91,7 +82,6 @@ class DashboardController extends Controller
                 'recent_transfers',
                 'units_stats',
                 'monthly_stats',
-                'type_stats',
                 'currentUnit',
                 'currentCompany'
             ));
