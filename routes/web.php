@@ -132,4 +132,4 @@ Route::get('/api/units/{unitId}/companies', [ClearingTransactionController::clas
 Route::get('/api/units/{unitId}/companies/{companyId}/accounts', [ClearingTransactionController::class, 'getAccountsByCompany']);
 
 // مسارات الوحدة المركزية - جميع الميزات المتقدمة
-// Admin routes removed - using new dashboard system
+require __DIR__.'/admin.php';
