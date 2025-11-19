@@ -53,6 +53,7 @@ class AuthController extends Controller
             // حفظ معلومات الوحدة والمؤسسة في الجلسة
             $request->session()->put('unit_id', $request->unit_id);
             $request->session()->put('company_id', $request->company_id);
+            $request->session()->put('database', 'main'); // قاعدة البيانات الرئيسية
             
             // مسح محاولات الدخول الفاشلة
             RateLimiter::clear($this->throttleKey($request));
