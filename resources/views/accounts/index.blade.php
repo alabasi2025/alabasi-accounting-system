@@ -19,21 +19,7 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">المؤسسة:</label>
-                    <select class="form-select form-select-sm" onchange="window.location.href='/accounts?company_id='+this.value">
-                        @foreach($companies as $comp)
-                            <option value="{{ $comp->id }}" {{ $company->id == $comp->id ? 'selected' : '' }}>
-                                {{ $comp->company_name }} ({{ $comp->company_code }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">الوحدة:</label>
-                    <input type="text" class="form-control form-control-sm" value="{{ $company->unit->name ?? '-' }}" readonly>
-                </div>
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <label class="form-label small text-muted">بحث:</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
